@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>S3 test</title>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.813.0.min.js"></script>
+</head>
+<body>
+
+<script>
+    // Initialize the Amazon Cognito credentials provider
+    const s3BucketName = 'selfactualizationtest';
+    AWS.config.region = 'eu-north-1'; // Region
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'eu-north-1:51a3d198-8df4-48b0-bc86-61e12f4539d9',
+    });
+    console.log("Hello World!");
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'IDENTITY_POOL_ID',
+    });
+
+    const s3 = new AWS.S3({
+        params: {Bucket: s3BucketName}
+    });
+
+    const params = {
+        Bucket: 'selfactualizationtest'
+    };
+
+    s3.listObjects(params, function(err, data) {
+        if (err) {
+            throw err;
+        }
+        console.log(data);
+    });
+
+    // function testListS3() {
+    //     s3.listObjects({Delimiter: '/'}, function(err, data) {
+    //         if (err) {
+    //             return alert("Error listing!")
+    //         } else {
+    //             console.log(data);
+    //         }
+    //     })
+    // }
+
+    // testListS3()
+</script>
+
+</body>
+</html>
