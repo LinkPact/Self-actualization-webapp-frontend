@@ -8,45 +8,36 @@
 </head>
 <body>
 
+<h1>Basic S3 access</h1>
+
+<ul>
+    <li>Using S3 bucket</li>
+    <li>Using anonymous identities for access</li>
+    <li>Requires access management using IAM, I think</li>
+    <li>Check console for listing</li>
+</ul>
+
 <script>
-    // Initialize the Amazon Cognito credentials provider
     const s3BucketName = 'selfactualizationtest';
+
+    // Setup identity pool
     AWS.config.region = 'eu-north-1'; // Region
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
         IdentityPoolId: 'eu-north-1:51a3d198-8df4-48b0-bc86-61e12f4539d9',
     });
-    console.log("Hello World!");
 
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'IDENTITY_POOL_ID',
-    });
-
+    // Access S3 bucket using the anonymous credentials
     const s3 = new AWS.S3({
         params: {Bucket: s3BucketName}
     });
 
-    const params = {
-        Bucket: 'selfactualizationtest'
-    };
-
-    s3.listObjects(params, function(err, data) {
+    // List the content of the bucket
+    s3.listObjects(function(err, data) {
         if (err) {
             throw err;
         }
         console.log(data);
     });
-
-    // function testListS3() {
-    //     s3.listObjects({Delimiter: '/'}, function(err, data) {
-    //         if (err) {
-    //             return alert("Error listing!")
-    //         } else {
-    //             console.log(data);
-    //         }
-    //     })
-    // }
-
-    // testListS3()
 </script>
 
 </body>
