@@ -1,0 +1,15 @@
+{
+	"users": [{
+			"danne": {
+				"goals": ["save the world"],
+				"habits": ["eat", "drink", "sleep"]
+			}
+		},
+		{
+			"jakob": {
+				"goals": ["internal peace"],
+				"habits": ["eat", "rest", "walk"]
+			}
+		}
+	]
+}
