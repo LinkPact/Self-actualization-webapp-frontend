@@ -15,4 +15,8 @@ https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-pho
 
 * Allowing the SDK to access the credentials from the environment
 https://stackoverflow.com/questions/61028751/missing-credentials-in-config-if-using-aws-config-file-set-aws-sdk-load-config
-:
+
+# User managemnet
+
+* Using Cognito for keeping track of users: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-app-integration.html
+* Demo: https://1billiontech.com/blog_User_Authentication_and_Authorization_with_AWS_Cognito.php
