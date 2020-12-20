@@ -13,3 +13,7 @@ Let's give an example of how the values, habits and milestones are related. Say 
 `npm run dev`
 
 This will configure `rollup` to rebuild the project when it detects changes and start the development server on [localhost:8080](http://localhost:8080).
+
+## Domain
+
+Deployment to: https://main.d1acg8moyha6ni.amplifyapp.com/
