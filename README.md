@@ -12,8 +12,6 @@ Let's give an example of how the values, habits and milestones are related. Say 
 ## Start dev server
 Make sure you've run `npm install` to install the development dependencies locally, then run `npm run serve` which will make the site available at [http://localhost:8080](http://localhost:8080).
 
-The 
-
 ## Domain
 
 Deployment to: https://main.d1acg8moyha6ni.amplifyapp.com/
