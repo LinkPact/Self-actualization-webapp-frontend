@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>S3 test</title>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.813.0.min.js"></script>
+</head>
+<body>
+
+<h1>Basic S3 access</h1>
+
+<ul>
+    <li>Using S3 bucket</li>
+    <li>Using anonymous identities for access</li>
+    <li>Requires access management using IAM, I think</li>
+    <li>Check console for listing</li>
+</ul>
+
+<script>
+    const s3BucketName = 'selfactualizationtest';
+
+    // Setup identity pool
+    AWS.config.region = 'eu-north-1'; // Region
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'eu-north-1:51a3d198-8df4-48b0-bc86-61e12f4539d9',
+    });
+
+    // Access S3 bucket using the anonymous credentials
+    const s3 = new AWS.S3({
+        params: {Bucket: s3BucketName}
+    });
+
+    // List the content of the bucket
+    s3.listObjects(function(err, data) {
+        if (err) {
+            throw err;
+        }
+        if (data) {
+            console.log(data.Contents);
+            data.Contents.forEach((file) => {
+                if (file.Key === "user1.json") {
+                    console.log(file.Key)
+                    console.log(file)
+                }
+            })
+        }
+    });
+
+    s3.getObject({
+        Bucket: "",
+        Key: "user1.json"
+    }, function(err, data) {
+        if (err) {
+            console.log(err, err.stack);
+            callback(err);
+        } else {
+            console.log("Raw text:\n" + data.body.toString('ascii'))
+        }
+    })
+</script>
+
+</body>
+</html>
