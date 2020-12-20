@@ -26,6 +26,7 @@
     </div>
     <div><button onclick="sendToDatabaseClick()">Upload to database</button></div>
     <div><button onclick="loadFromDatabaseClick()">Retrieve from database</button></div>
+    <div><button onclick="resetDatabase()">Reset database</button></div>
 </div>
 
 <div>
@@ -37,6 +38,7 @@
 
 <script>
     const s3BucketName = 'selfactualizationtest';
+    const jsonPath = 'testDb.json';
 
     // Setup identity pool
     AWS.config.region = 'eu-north-1'; // Region
@@ -46,38 +48,57 @@
 
     // Access S3 bucket using the anonymous credentials
     const s3 = new AWS.S3({
-        params: {Bucket: s3BucketName}
+        params: {Bucket: s3BucketName, Key: "user1.json"}
     });
 
-    // List the content of the bucket
-    s3.listObjects(function(err, data) {
-        if (err) {
-            throw err;
-        }
-        if (data) {
-            console.log(data.Contents);
-            data.Contents.forEach((file) => {
-                if (file.Key === "user1.json") {
-                    console.log(file.Key)
-                    console.log(file)
-                }
-            })
-        }
-    });
+    function getTextFromS3Object(bucketName, objName) {
+        return s3.getObject({
+            Bucket: bucketName,
+            Key: objName
+        }, function(err, data) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("From request: ", data.Body.toString('ascii'));
+            }
+        })
+    }
 
-    // s3.getObject({
-    //     Bucket: "",
-    //     Key: "user1.json"
-    // }, function(err, data) {
-    //     if (err) {
-    //         console.log(err, err.stack);
-    //         callback(err);
-    //     } else {
-    //         console.log("Raw text:\n" + data.body.toString('ascii'))
-    //     }
-    // });
+    function getS3JSON(bucketName, objName) {
+        return s3.getObject({
+            Bucket: bucketName,
+            Key: objName
+            // Key: "user1.json"
+        }, function(err, data) {
+            if (err) {
+                console.log(objName + " not found!")
+            } else {
+                const jsonRaw = data.Body.toString('ascii');
+                console.log(jsonRaw);
+                console.log(jsonRaw[0]);
+                const jsonObj = JSON.parse(jsonRaw);
+                console.log(jsonObj);
+                return jsonObj;
+            }
+        });
+    }
 
     const loadedEntries = ["Health", "Usefulness"];
+    getS3JSON(s3BucketName, "test.json");
+
+    s3.putObject({
+       Bucket: s3BucketName,
+       Key: "test.json",
+        ContentType:'text/plain',
+        Body: JSON.stringify(loadedEntries)
+    }, function(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("Testing putting object");
+        }
+    });
 
     function newEntryClick(newEntry) {
         console.log("New entry clicked");
@@ -104,6 +125,10 @@
             newItem.appendChild(document.createTextNode(entry));
             listElem.appendChild(newItem);
         });
+    }
+
+    function resetDatabase() {
+        console.log("Reset database");
     }
 
     window.onload = function() {
