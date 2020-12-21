@@ -1,7 +1,7 @@
 import { getS3JSON, putS3JSON } from "../../modules/s3_interaction.js";
 
 const s3BucketName = 'selfactualizationtest';
-const jsonPath = 'testDb.json';
+const jsonPath = 'test.json';
 
 // Setup identity pool
 AWS.config.region = 'eu-north-1'; // Region
@@ -9,44 +9,31 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: 'eu-north-1:51a3d198-8df4-48b0-bc86-61e12f4539d9',
 });
 
-// Access S3 bucket using the anonymous credentials
-const s3 = new AWS.S3({
-    params: {Bucket: s3BucketName, Key: "user1.json"}
-});
 
-let loadedEntries = ["Health", "Usefulness", "Empathy"];
-// putS3JSON(s3, s3BucketName, "test.json", loadedEntries);
-
-// let loadedEntries = getS3JSON(s3, s3BucketName, "test.json");
-console.log(loadedEntries);
-
-
-
+const s3 = new AWS.S3();
+let loadedEntries = ["Default entries"];
 
 function newEntryClick(newEntry) {
-    console.log("New entry clicked");
     loadedEntries.push(newEntry);
-    updateHabitsDisplay();
+    updateHabitsDisplay(loadedEntries);
 }
 
-function sendToDatabaseClick() {
-    console.log("Sending to database");
-    putS3JSON(s3, s3BucketName, "test.json", loadedEntries);
+async function sendToDatabaseClick() {
+    putS3JSON(s3, s3BucketName, jsonPath, loadedEntries);
 }
 
-function loadFromDatabaseClick() {
-    console.log("Loading from database");
-    loadedEntries = getS3JSON(s3, s3BucketName, "test.json");
-    console.log("Loaded: " + loadedEntries[0]);
-    updateHabitsDisplay();
+async function loadFromDatabase(s3BucketName) {
+
+    loadedEntries = await getS3JSON(s3, s3BucketName, jsonPath);
+    updateHabitsDisplay(loadedEntries);
 }
 
 // https://stackoverflow.com/questions/43376270/how-to-dynamically-populate-a-list-on-an-html-page
-function updateHabitsDisplay() {
+function updateHabitsDisplay(entries) {
     const listElem = document.getElementById("habits_list");
     listElem.innerHTML = "";
 
-    loadedEntries.forEach(function(entry) {
+    entries.forEach(function(entry) {
         const newItem = document.createElement('li');
         newItem.appendChild(document.createTextNode(entry));
         listElem.appendChild(newItem);
@@ -55,12 +42,14 @@ function updateHabitsDisplay() {
 
 function resetDatabase() {
     console.log("Reset database");
-    const defaultEntries = ["Health", "Usefulness", "Empathy"];
-    putS3JSON(s3, s3BucketName, "test.json", defaultEntries);
+    loadedEntries = ["Health", "Usefulness", "Empathy"];
+    putS3JSON(s3, s3BucketName, jsonPath, loadedEntries);
+    updateHabitsDisplay(loadedEntries);
 }
 
 window.onload = function() {
-    updateHabitsDisplay();
+    loadFromDatabase(s3BucketName);
+    updateHabitsDisplay(loadedEntries);
 };
 
 // Binding callbacks through JS
@@ -81,7 +70,7 @@ function addListeners() {
 
     document
         .getElementById('loadFromDbButton')
-        .addEventListener('click', loadFromDatabaseClick);
+        .addEventListener('click', function() {loadFromDatabase(s3BucketName)});
 
     document
         .getElementById('resetDbButton')
