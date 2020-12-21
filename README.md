@@ -10,9 +10,7 @@ When you have defined some habits and/or milestones, you simply check in to the 
 Let's give an example of how the values, habits and milestones are related. Say you set being healthy as one of your values. You could then set a habit to take a walk everyday. This habit, if followed, let's you begin to realize living a life with the thing you value: being healthy. But it might also be motivating to have a concrete goal you can aim for. This is where milestones come in. In this example, you could set a milestone to start going to the gym. Besides serving as motivation to reach the milestone, it will feel as a great accomplishment when you _do_ reach it. This will serve to further reinforce your motivation to continue living in accordance with your values.
 
 ## Start dev server
-`npm run dev`
-
-This will configure `rollup` to rebuild the project when it detects changes and start the development server on [localhost:8080](http://localhost:8080).
+Make sure you've run `npm install` to install the development dependencies locally, then run `npm run serve` which will make the site available at [http://localhost:8080](http://localhost:8080).
 
 ## Domain
 
