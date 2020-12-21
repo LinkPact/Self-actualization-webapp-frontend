@@ -22,11 +22,11 @@
 <div>
     <div>
         <label for="goal_input">Test </label><input type="text" id="goal_input" name="Input goal name">
-        <button onclick="newEntryClick(document.getElementById('goal_input').value)">Add new entry</button>
+        <button id="newEntryButton">Add new entry</button>
     </div>
-    <div><button onclick="sendToDatabaseClick()">Upload to database</button></div>
-    <div><button onclick="loadFromDatabaseClick()">Retrieve from database</button></div>
-    <div><button onclick="resetDatabase()">Reset database</button></div>
+    <div><button id="sendToDbButton">Upload to database</button></div>
+    <div><button id="loadFromDbButton">Retrieve from database</button></div>
+    <div><button id="resetDbButton">Reset database</button></div>
 </div>
 
 <div>
@@ -36,105 +36,7 @@
     </ul>
 </div>
 
-<script>
-    const s3BucketName = 'selfactualizationtest';
-    const jsonPath = 'testDb.json';
-
-    // Setup identity pool
-    AWS.config.region = 'eu-north-1'; // Region
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'eu-north-1:51a3d198-8df4-48b0-bc86-61e12f4539d9',
-    });
-
-    // Access S3 bucket using the anonymous credentials
-    const s3 = new AWS.S3({
-        params: {Bucket: s3BucketName, Key: "user1.json"}
-    });
-
-    function getTextFromS3Object(bucketName, objName) {
-        return s3.getObject({
-            Bucket: bucketName,
-            Key: objName
-        }, function(err, data) {
-            if (err) {
-                console.log(err)
-            }
-            else {
-                console.log("From request: ", data.Body.toString('ascii'));
-            }
-        })
-    }
-
-    function getS3JSON(bucketName, objName) {
-        return s3.getObject({
-            Bucket: bucketName,
-            Key: objName
-            // Key: "user1.json"
-        }, function(err, data) {
-            if (err) {
-                console.log(objName + " not found!")
-            } else {
-                const jsonRaw = data.Body.toString('ascii');
-                console.log(jsonRaw);
-                console.log(jsonRaw[0]);
-                const jsonObj = JSON.parse(jsonRaw);
-                console.log(jsonObj);
-                return jsonObj;
-            }
-        });
-    }
-
-    const loadedEntries = ["Health", "Usefulness"];
-    getS3JSON(s3BucketName, "test.json");
-
-    s3.putObject({
-       Bucket: s3BucketName,
-       Key: "test.json",
-        ContentType:'text/plain',
-        Body: JSON.stringify(loadedEntries)
-    }, function(err, data) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("Testing putting object");
-        }
-    });
-
-    function newEntryClick(newEntry) {
-        console.log("New entry clicked");
-        loadedEntries.push(newEntry);
-        updateHabitsDisplay();
-    }
-
-    function sendToDatabaseClick() {
-        console.log("Sending to database");
-    }
-
-    function loadFromDatabaseClick() {
-        console.log("Loading from database");
-        updateHabitsDisplay();
-    }
-
-    // https://stackoverflow.com/questions/43376270/how-to-dynamically-populate-a-list-on-an-html-page
-    function updateHabitsDisplay() {
-        const listElem = document.getElementById("habits_list");
-        listElem.innerHTML = "";
-
-        loadedEntries.forEach(function(entry) {
-            const newItem = document.createElement('li');
-            newItem.appendChild(document.createTextNode(entry));
-            listElem.appendChild(newItem);
-        });
-    }
-
-    function resetDatabase() {
-        console.log("Reset database");
-    }
-
-    window.onload = function() {
-        updateHabitsDisplay();
-    }
-</script>
+<script type="module" src="minimal_database_interface.js"></script>
 
 </body>
 </html>
