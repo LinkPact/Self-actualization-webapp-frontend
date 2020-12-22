@@ -24,5 +24,8 @@
   "homepage": "https://github.com/linkpact/self-actualization-webapp-frontend#readme",
   "devDependencies": {
     "http-server": "^0.12.3"
+  },
+  "dependencies": {
+    "amazon-cognito-identity-js": "^4.5.6"
   }
 }

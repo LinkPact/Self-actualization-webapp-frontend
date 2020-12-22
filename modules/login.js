@@ -13,63 +13,66 @@ function register(){
     }
 }
 
-function registerUser(email, username, password){
-    var attributeList = [];
+function registerUser(poolData, email, password) {
+    const attributeList = [];
 
-    var dataEmail = {
+    const dataEmail = {
         Name : 'email',
         Value : email
     };
 
-    var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    const attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
 
     attributeList.push(attributeEmail);
 
-    $("#loader").show();
-    userPool.signUp(username, password, attributeList, null, function(err, result){
+    // $("#loader").show();
+    userPool.signUp(email, password, attributeList, null, function(err, result){
         if (err) {
-            logMessage(err.message);
-        }else{
+            console.log(err.message);
+        } else {
             cognitoUser = result.user;
-            logMessage('Registration Successful!');
-            logMessage('Username is: ' + cognitoUser.getUsername());
-            logMessage('Please enter the verification code sent to your Email.');
-            switchToVerificationCodeView();
+            console.log('Registration Successful!');
+            console.log('Username is: ' + cognitoUser.getUsername());
+            console.log('Please enter the verification code sent to your Email.');
+            // switchToVerificationCodeView();
         }
-        $("#loader").hide();
+        // $("#loader").hide();
     });
 }
 
-function logIn(){
+function logIn(poolData, username, password){
 
-    if(!$('#userNameInput').val() || !$('#passwordInput').val()){
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+    if(!username || !password){
         logMessage('Please enter Username and Password!');
-    }else{
-        var authenticationData = {
-            Username : $('#userNameInput').val(),
-            Password : $("#passwordInput").val(),
+    } else {
+        const authenticationData = {
+            Username : username,
+            Password : password,
         };
-        var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+        const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
 
-        var userData = {
-            Username : $('#userNameInput').val(),
+        const userData = {
+            Username : username,
             Pool : userPool
         };
-        cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
-        $("#loader").show();
+        // $("#loader").show();
         cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: function (result) {
-                logMessage('Logged in!');
-                switchToLoggedInView();
+                console.log('Logged in!');
+                // switchToLoggedInView();
 
-                idToken = result.getIdToken().getJwtToken();
-                getCognitoIdentityCredentials();
+                const idToken = result.getIdToken().getJwtToken();
+                // getCognitoIdentityCredentials();
             },
 
             onFailure: function(err) {
-                logMessage(err.message);
-                $("#loader").hide();
+                console.log(err.message);
+                // $("#loader").hide();
             },
 
         });
@@ -109,29 +112,29 @@ function getCognitoIdentityCredentials(){
 /*
 If user has logged in before, get the previous session so user doesn't need to log in again.
 */
-function getCurrentLoggedInSession(){
+function getCurrentLoggedInSession(poolData){
 
     // console.log(AWS);
     // console.log(AmazonCognitoIdentity);
     // $("#loader").show();
-    userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-    cognitoUser = userPool.getCurrentUser();
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    const cognitoUser = userPool.getCurrentUser();
 
     if(cognitoUser != null){
         cognitoUser.getSession(function(err, session) {
             if (err) {
-                logMessage(err.message);
-            }else{
-                logMessage('Session found! Logged in.');
-                switchToLoggedInView();
+                console.log(err.message);
+            } else {
+                console.log('Session found! Logged in.');
+                // switchToLoggedInView();
                 idToken = session.getIdToken().getJwtToken();
                 getCognitoIdentityCredentials();
             }
-            $("#loader").hide();
+            // $("#loader").hide();
         });
-    }else{
-        logMessage('Session expired. Please log in again.');
-        $("#loader").hide();
+    } else {
+        console.log('Session expired. Please log in again.');
+        // $("#loader").hide();
     }
 
 }
