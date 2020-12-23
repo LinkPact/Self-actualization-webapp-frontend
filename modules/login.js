@@ -1,17 +1,17 @@
-function register(){
-    switchToRegisterView();
-
-    if( !$('#emailInput').val() || !$('#userNameInput').val()  || !$('#passwordInput').val() || !$('#confirmPasswordInput').val() ) {
-        logMessage('Please fill all the fields!');
-    }else{
-        if($('#passwordInput').val() == $('#confirmPasswordInput').val()){
-            registerUser($('#emailInput').val(), $('#userNameInput').val(), $('#passwordInput').val());
-        }else{
-            logMessage('Confirm password failed!');
-        }
-
-    }
-}
+// function register(){
+//     switchToRegisterView();
+//
+//     if( !$('#emailInput').val() || !$('#userNameInput').val()  || !$('#passwordInput').val() || !$('#confirmPasswordInput').val() ) {
+//         logMessage('Please fill all the fields!');
+//     }else{
+//         if($('#passwordInput').val() == $('#confirmPasswordInput').val()){
+//             registerUser($('#emailInput').val(), $('#userNameInput').val(), $('#passwordInput').val());
+//         }else{
+//             logMessage('Confirm password failed!');
+//         }
+//
+//     }
+// }
 
 function registerUser(poolData, email, password) {
     const attributeList = [];
@@ -31,22 +31,22 @@ function registerUser(poolData, email, password) {
         if (err) {
             console.log(err.message);
         } else {
-            cognitoUser = result.user;
             console.log('Registration Successful!');
             console.log('Username is: ' + cognitoUser.getUsername());
             console.log('Please enter the verification code sent to your Email.');
+            return result.user;
             // switchToVerificationCodeView();
         }
         // $("#loader").hide();
     });
 }
 
-function logIn(poolData, username, password){
+async function logIn(poolData, username, password){
 
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-    if(!username || !password){
-        logMessage('Please enter Username and Password!');
+    if(!username || !password) {
+        console.log('Please enter Username and Password!');
     } else {
         const authenticationData = {
             Username : username,
@@ -58,24 +58,24 @@ function logIn(poolData, username, password){
             Username : username,
             Pool : userPool
         };
-        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        return new AmazonCognitoIdentity.CognitoUser(userData);
 
         // $("#loader").show();
-        cognitoUser.authenticateUser(authenticationDetails, {
-            onSuccess: function (result) {
-                console.log('Logged in!');
-                // switchToLoggedInView();
-
-                const idToken = result.getIdToken().getJwtToken();
-                // getCognitoIdentityCredentials();
-            },
-
-            onFailure: function(err) {
-                console.log(err.message);
-                // $("#loader").hide();
-            },
-
-        });
+        // cognitoUser.authenticateUser(authenticationDetails, {
+        //     onSuccess: function (result) {
+        //         console.log('Logged in!');
+        //         // switchToLoggedInView();
+        //
+        //         const idToken = result.getIdToken().getJwtToken();
+        //         // getCognitoIdentityCredentials();
+        //     },
+        //
+        //     onFailure: function(err) {
+        //         console.log(err.message);
+        //         // $("#loader").hide();
+        //     },
+        //
+        // });
     }
 }
 
@@ -97,15 +97,15 @@ function getCognitoIdentityCredentials(){
 
     AWS.config.credentials.get(function(err) {
         if (err){
-            logMessage(err.message);
+            console.log(err.message);
         }
         else {
-            logMessage('AWS Access Key: '+ AWS.config.credentials.accessKeyId);
-            logMessage('AWS Secret Key: '+ AWS.config.credentials.secretAccessKey);
-            logMessage('AWS Session Token: '+ AWS.config.credentials.sessionToken);
+            console.log('AWS Access Key: '+ AWS.config.credentials.accessKeyId);
+            console.log('AWS Secret Key: '+ AWS.config.credentials.secretAccessKey);
+            console.log('AWS Session Token: '+ AWS.config.credentials.sessionToken);
         }
 
-        $("#loader").hide();
+        // $("#loader").hide();
     });
 }
 
@@ -126,9 +126,10 @@ function getCurrentLoggedInSession(poolData){
                 console.log(err.message);
             } else {
                 console.log('Session found! Logged in.');
+                console.log(session);
                 // switchToLoggedInView();
-                idToken = session.getIdToken().getJwtToken();
-                getCognitoIdentityCredentials();
+                const idToken = session.getIdToken().getJwtToken();
+                // getCognitoIdentityCredentials();
             }
             // $("#loader").hide();
         });
@@ -139,4 +140,34 @@ function getCurrentLoggedInSession(poolData){
 
 }
 
-export { register, registerUser, logIn, getCognitoIdentityCredentials, getCurrentLoggedInSession };
+function logOut(user) {
+    if (user != null) {
+
+        // $("#loader").show();
+        user.signOut();
+        // switchToLogInView();
+        console.log('Logged out!');
+        // $("#loader").hide();
+    }
+    else {
+        console.log("No user logged in");
+    }
+}
+
+function verifyCode(verificationCode) {
+
+    cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
+        if (err) {
+            logMessage(err.message);
+        }else{
+            console.log('Successfully verified code!');
+            // switchToLogInView();
+        }
+
+        // $("#loader").hide();
+    });
+    // }
+}
+
+export { registerUser, logIn, getCognitoIdentityCredentials,
+    getCurrentLoggedInSession, verifyCode, logOut };

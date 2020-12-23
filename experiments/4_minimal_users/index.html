@@ -11,6 +11,8 @@
 <body>
     <h3>User management test</h3>
 
+    <div id="login_message">Login status: Unknown</div>
+
     <div>
         <label>
             Email
@@ -26,12 +28,16 @@
     </div>
 
     <div>
-        <button id="register_button">Test register</button>
+        <label>
+            Verification code
+            <input id="verification_code" type="text">
+        </label>
     </div>
 
-    <div>
-        <button id="login_button">Test login</button>
-    </div>
+    <div><button id="register_button">Test register</button></div>
+    <div><button id="verify_button">Verify code</button></div>
+    <div><button id="login_button">Login</button></div>
+    <div><button id="logout_button">Logout</button></div>
 
     <script type="module" src="index.js"></script>
 
