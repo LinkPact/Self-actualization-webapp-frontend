@@ -27,7 +27,7 @@ function registerUser(poolData, email, password) {
     attributeList.push(attributeEmail);
 
     // $("#loader").show();
-    userPool.signUp(email, password, attributeList, null, function(err, result){
+    userPool.signUp(email, password, attributeList, null, function(err, result) {
         if (err) {
             console.log(err.message);
         } else {
@@ -58,24 +58,26 @@ async function logIn(poolData, username, password){
             Username : username,
             Pool : userPool
         };
-        return new AmazonCognitoIdentity.CognitoUser(userData);
+        const user = new AmazonCognitoIdentity.CognitoUser(userData);
 
         // $("#loader").show();
-        // cognitoUser.authenticateUser(authenticationDetails, {
-        //     onSuccess: function (result) {
-        //         console.log('Logged in!');
-        //         // switchToLoggedInView();
-        //
-        //         const idToken = result.getIdToken().getJwtToken();
-        //         // getCognitoIdentityCredentials();
-        //     },
-        //
-        //     onFailure: function(err) {
-        //         console.log(err.message);
-        //         // $("#loader").hide();
-        //     },
-        //
-        // });
+        user.authenticateUser(authenticationDetails, {
+            onSuccess: function (result) {
+                console.log('Logged in!');
+                // switchToLoggedInView();
+
+                const idToken = result.getIdToken().getJwtToken();
+                // getCognitoIdentityCredentials();
+            },
+
+            onFailure: function(err) {
+                console.log(err.message);
+                // $("#loader").hide();
+            },
+
+        });
+
+        return user;
     }
 }
 
@@ -112,7 +114,7 @@ function getCognitoIdentityCredentials(){
 /*
 If user has logged in before, get the previous session so user doesn't need to log in again.
 */
-function getCurrentLoggedInSession(poolData){
+async function getCurrentLoggedInSession(poolData){
 
     // console.log(AWS);
     // console.log(AmazonCognitoIdentity);

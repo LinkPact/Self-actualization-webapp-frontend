@@ -2,7 +2,6 @@ import { getCurrentLoggedInSession, registerUser, logIn, logOut, verifyCode }
 from "../../modules/login.js";
 
 // import "./amazon-cognito-identity"
-
 // import { AmazonCognitoIdentity } from "./amazon-cognito-identity.js";
 
 //=============== AWS IDs ===============
@@ -12,25 +11,40 @@ const region = 'eu-north-1';
 // const identityPoolId = '<Identity Pool ID>';
 //=============== AWS IDs ===============
 
-let cognitoUser;
-// var idToken;
-// var userPool;
+let cognitoUserObj = {
+    user: null,
+    setUser(user) {
+        // refreshLoginStatus();
+        let loginMessage;
+        if (user) {
+            loginMessage = user.username;
+        }
+        else {
+            loginMessage = "Logged out";
+        }
+        document.getElementById('login_message').textContent = loginMessage;
+        // console.log(user.fetchUserData());
+        console.log(user);
+        this.user = user;
+    }
+};
+
 const poolData = {
     UserPoolId : userPoolId,
     ClientId : clientId
 };
 
-
 document
     .getElementById('register_button')
     .addEventListener('click',
         function() {
-            cognitoUser = registerUser(
+            const user = registerUser(
                 poolData,
                 document.getElementById('email').value,
                 document.getElementById('password').value
             );
-            console.log(cognitoUser);
+            cognitoUserObj.setUser(user);
+            // console.log(cognitoUserObj.user);
             // newEntryClick(document.getElementById('goal_input').value)
         });
 
@@ -38,12 +52,15 @@ document
     .getElementById('login_button')
     .addEventListener('click',
         async function() {
-            cognitoUser = await logIn(
+            const user = await logIn(
                 poolData,
                 document.getElementById('email').value,
                 document.getElementById('password').value
             );
-            console.log(cognitoUser);
+            cognitoUserObj.setUser(user);
+
+            // console.log(cognitoUserObj.user);
+            // console.log(cognitoUserObj.user.username);
             // newEntryClick(document.getElementById('goal_input').value)
         });
 
@@ -52,8 +69,9 @@ document
     .addEventListener('click',
         async function() {
             // console.log(cognitoUser);
-            cognitoUser = await logOut(cognitoUser);
-            console.log(cognitoUser);
+            const user = await logOut(cognitoUserObj.user);
+            cognitoUserObj.setUser(user);
+            // console.log(cognitoUserObj.user);
             // newEntryClick(document.getElementById('goal_input').value)
         });
 
@@ -69,5 +87,9 @@ document
             // newEntryClick(document.getElementById('goal_input').value)
         });
 
-getCurrentLoggedInSession(poolData);
+// window.onload = async function() {
+//     cognitoUserObj.user = await getCurrentLoggedInSession(poolData);
+//     console.log(cognitoUserObj.user);
+// };
+
 
