@@ -13,19 +13,22 @@ const region = 'eu-north-1';
 
 let cognitoUserObj = {
     user: null,
+    id: null,
     setUser(user) {
-        // refreshLoginStatus();
         let loginMessage;
         if (user) {
-            loginMessage = user.username;
+            loginMessage = user.username + " ID: " + this.id;
         }
         else {
             loginMessage = "Logged out";
         }
         document.getElementById('login_message').textContent = loginMessage;
-        // console.log(user.fetchUserData());
         console.log(user);
         this.user = user;
+    },
+    setId(id) {
+        this.id = id;
+        console.log(id);
     }
 };
 
@@ -44,46 +47,40 @@ document
                 document.getElementById('password').value
             );
             cognitoUserObj.setUser(user);
-            // console.log(cognitoUserObj.user);
-            // newEntryClick(document.getElementById('goal_input').value)
         });
 
 document
     .getElementById('login_button')
     .addEventListener('click',
         async function() {
-            const user = await logIn(
+            const loginObj = await logIn(
                 poolData,
                 document.getElementById('email').value,
                 document.getElementById('password').value
             );
+            const user = loginObj.user;
+            const id = loginObj.id;
             cognitoUserObj.setUser(user);
-
-            // console.log(cognitoUserObj.user);
-            // console.log(cognitoUserObj.user.username);
-            // newEntryClick(document.getElementById('goal_input').value)
+            cognitoUserObj.setId(id);
         });
 
 document
     .getElementById('logout_button')
     .addEventListener('click',
         async function() {
-            // console.log(cognitoUser);
             const user = await logOut(cognitoUserObj.user);
             cognitoUserObj.setUser(user);
-            // console.log(cognitoUserObj.user);
-            // newEntryClick(document.getElementById('goal_input').value)
         });
 
 document
     .getElementById('verify_button')
     .addEventListener('click',
         async function() {
-            verifyCode(
+            const id = verifyCode(
                 cognitoUserObj.user,
                 document.getElementById('verification_code').value
-            )
-            // newEntryClick(document.getElementById('goal_input').value)
+            );
+            cognitoUserObj.setId(id);
         });
 
 // window.onload = async function() {

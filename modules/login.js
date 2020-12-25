@@ -44,9 +44,10 @@ function registerUser(poolData, email, password) {
 
 async function logIn(poolData, username, password){
 
+    let idToken = null;
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-    if(!username || !password) {
+    if (!username || !password) {
         console.log('Please enter Username and Password!');
     } else {
         const authenticationData = {
@@ -69,7 +70,9 @@ async function logIn(poolData, username, password){
                 console.log('Logged in!');
                 // switchToLoggedInView();
 
-                const idToken = result.getIdToken().getJwtToken();
+                idToken = result.getIdToken().getJwtToken();
+                console.log("Printing ID token");
+                console.log(idToken);
                 // getCognitoIdentityCredentials();
             },
 
@@ -80,7 +83,7 @@ async function logIn(poolData, username, password){
 
         });
 
-        return user;
+        return {"user": user, "id": idToken};
     }
 }
 
@@ -117,7 +120,7 @@ function getCognitoIdentityCredentials(){
 /*
 If user has logged in before, get the previous session so user doesn't need to log in again.
 */
-async function getCurrentLoggedInSession(poolData){
+async function getCurrentLoggedInSession(poolData) {
 
     // console.log(AWS);
     // console.log(AmazonCognitoIdentity);
@@ -125,16 +128,16 @@ async function getCurrentLoggedInSession(poolData){
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
     const cognitoUser = userPool.getCurrentUser();
 
-    if(cognitoUser != null){
+    if (cognitoUser != null){
         cognitoUser.getSession(function(err, session) {
             if (err) {
                 console.log(err.message);
             } else {
                 console.log('Session found! Logged in.');
                 console.log(session);
-                // switchToLoggedInView();
                 const idToken = session.getIdToken().getJwtToken();
                 // getCognitoIdentityCredentials();
+                return idToken
             }
             // $("#loader").hide();
         });
