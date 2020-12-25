@@ -30,9 +30,10 @@ function registerUser(poolData, email, password) {
     userPool.signUp(email, password, attributeList, null, function(err, result) {
         if (err) {
             console.log(err.message);
+            console.log(err.stack);
         } else {
             console.log('Registration Successful!');
-            console.log('Username is: ' + cognitoUser.getUsername());
+            console.log('Username is: ' + email);
             console.log('Please enter the verification code sent to your Email.');
             return result.user;
             // switchToVerificationCodeView();
@@ -59,6 +60,8 @@ async function logIn(poolData, username, password){
             Pool : userPool
         };
         const user = new AmazonCognitoIdentity.CognitoUser(userData);
+
+
 
         // $("#loader").show();
         user.authenticateUser(authenticationDetails, {
@@ -156,11 +159,11 @@ function logOut(user) {
     }
 }
 
-function verifyCode(verificationCode) {
+async function verifyCode(user, verificationCode) {
 
-    cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
+    user.confirmRegistration(verificationCode, true, function(err, result) {
         if (err) {
-            logMessage(err.message);
+            console.log(err.message);
         }else{
             console.log('Successfully verified code!');
             // switchToLogInView();

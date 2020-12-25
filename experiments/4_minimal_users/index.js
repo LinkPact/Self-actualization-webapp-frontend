@@ -78,11 +78,10 @@ document
 document
     .getElementById('verify_button')
     .addEventListener('click',
-        function() {
+        async function() {
             verifyCode(
-                poolData,
-                document.getElementById('email').value,
-                document.getElementById('password').value
+                cognitoUserObj.user,
+                document.getElementById('verification_code').value
             )
             // newEntryClick(document.getElementById('goal_input').value)
         });
