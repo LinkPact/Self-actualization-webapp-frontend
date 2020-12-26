@@ -2,6 +2,30 @@ import { getS3JSON, putS3JSON } from "../../modules/s3_interaction.js";
 
 const s3BucketName = 'selfactualizationtest';
 const jsonPath = 'test.json';
+const habits = [
+    {
+        "name": "Eat vegetables",
+        "frequency": "daily",
+        "values": [
+            "Health"
+        ]
+    },
+    {
+        "name": "Take a walk",
+        "frequency": "daily",
+        "values": [
+            "Health"
+        ]
+    },
+    {
+        "name": "Donate $5 to charity",
+        "frequency": "monthly",
+        "values": [
+            "Usefulness",
+            "Empathy"
+        ]
+    }
+];
 
 // Setup identity pool
 AWS.config.region = 'eu-north-1'; // Region
@@ -15,28 +39,42 @@ let loadedEntries = ["Default entries"];
 
 async function loadFromDatabase(s3BucketName) {
     loadedEntries = await getS3JSON(s3, s3BucketName, jsonPath);
-    updateHabitsDisplay(loadedEntries);
+    updateHabitsDisplay(loadedEntries, habits);
 }
 
 // https://stackoverflow.com/questions/43376270/how-to-dynamically-populate-a-list-on-an-html-page
-function updateHabitsDisplay(entries) {
+function updateHabitsDisplay(entries, habits) {
     const container = document.getElementById("value-container");
     container.innerHTML = "";
 
     entries.forEach(function(entry) {
-        container.appendChild(createValueCard(entry));
+        const habitsForValue = habits.filter(habit => habit.values.includes(entry));
+        container.appendChild(createValueCard(entry, habitsForValue));
     });
 }
 
-function createValueCard(heading) {
+function createValueCard(heading, habits) {
     const card = document.createElement('paper-card');
+    const cardContents = document.createElement('div');
+    cardContents.classList.add('card-content');
+    const cardContentsList = document.createElement('ul');
+
+    habits.forEach(habit => {
+        const li = document.createElement('li');
+        const checkbox = document.createElement('paper-checkbox');
+        checkbox.innerHTML = habit.name;
+        li.appendChild(checkbox);
+        cardContentsList.appendChild(li);
+    });
 
     card.setAttribute('heading', heading);
+    cardContents.appendChild(cardContentsList);
+    card.appendChild(cardContents);
 
     return card;
 }
 
 window.onload = function() {
     loadFromDatabase(s3BucketName);
-    updateHabitsDisplay(loadedEntries);
+    updateHabitsDisplay(loadedEntries, habits);
 };
