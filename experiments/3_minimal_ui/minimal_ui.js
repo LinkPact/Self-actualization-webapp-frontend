@@ -72,6 +72,34 @@ function createValueCard(heading, habits) {
     return card;
 }
 
+function addListeners() {
+    document.getElementById('newValueButton').addEventListener('click', () => {
+        const input = document.getElementById('value_input');
+        const valueName = input.value;
+        input.value = "";
+        loadedEntries.push(valueName);
+        updateHabitsDisplay(loadedEntries, habits);
+    });
+
+    document.getElementById('newHabitButton').addEventListener('click', () => {
+        const nameInput = document.getElementById('habit_name_input');
+        const valuesInput = document.getElementById('habit_values_input');
+        const habitName = nameInput.value;
+        const habitValues = valuesInput.value.split(',').map(value => value.trim());
+        nameInput.value = "";
+        valuesInput.value = "";
+
+        habits.push({
+            "name": habitName,
+            "values": habitValues
+        });
+
+        updateHabitsDisplay(loadedEntries, habits);
+    });
+}
+
+addListeners();
+
 window.onload = function() {
     loadFromDatabase(s3BucketName);
     updateHabitsDisplay(loadedEntries, habits);
