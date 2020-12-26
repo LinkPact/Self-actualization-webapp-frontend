@@ -1,21 +1,6 @@
-// function register(){
-//     switchToRegisterView();
-//
-//     if( !$('#emailInput').val() || !$('#userNameInput').val()  || !$('#passwordInput').val() || !$('#confirmPasswordInput').val() ) {
-//         logMessage('Please fill all the fields!');
-//     }else{
-//         if($('#passwordInput').val() == $('#confirmPasswordInput').val()){
-//             registerUser($('#emailInput').val(), $('#userNameInput').val(), $('#passwordInput').val());
-//         }else{
-//             logMessage('Confirm password failed!');
-//         }
-//
-//     }
-// }
+async function registerUser(poolData, cognitoUserObj, email, password) {
 
-function registerUser(poolData, email, password) {
     const attributeList = [];
-
     const dataEmail = {
         Name : 'email',
         Value : email
@@ -23,11 +8,9 @@ function registerUser(poolData, email, password) {
 
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
     const attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-
     attributeList.push(attributeEmail);
 
-    // $("#loader").show();
-    userPool.signUp(email, password, attributeList, null, function(err, result) {
+    const user = userPool.signUp(email, password, attributeList, null, function(err, result) {
         if (err) {
             console.log(err.message);
             console.log(err.stack);
@@ -35,14 +18,14 @@ function registerUser(poolData, email, password) {
             console.log('Registration Successful!');
             console.log('Username is: ' + email);
             console.log('Please enter the verification code sent to your Email.');
+            alert("An registration email should now have been sent to the entered email, fill in the verification code and click 'Verify code'");
             return result.user;
-            // switchToVerificationCodeView();
         }
-        // $("#loader").hide();
     });
+    cognitoUserObj.setUser(user);
 }
 
-async function logIn(poolData, username, password){
+async function logIn(poolData, cognitoUserObj, username, password){
 
     let idToken = null;
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
@@ -61,36 +44,31 @@ async function logIn(poolData, username, password){
             Pool : userPool
         };
         const user = new AmazonCognitoIdentity.CognitoUser(userData);
+        cognitoUserObj.setUser(user);
 
-
-
-        // $("#loader").show();
         user.authenticateUser(authenticationDetails, {
             onSuccess: function (result) {
                 console.log('Logged in!');
-                // switchToLoggedInView();
 
                 idToken = result.getIdToken().getJwtToken();
                 console.log("Printing ID token");
-                console.log(idToken);
-                // getCognitoIdentityCredentials();
+                cognitoUserObj.setId(idToken);
+                return true;
             },
 
             onFailure: function(err) {
                 console.log(err.message);
-                // $("#loader").hide();
+                return false;
             },
 
         });
-
-        return {"user": user, "id": idToken};
     }
 }
 
 /*
 This method will get temporary credentials for AWS using the IdentityPoolId and the Id Token recieved from AWS Cognito authentication provider.
 */
-function getCognitoIdentityCredentials(){
+function getCognitoIdentityCredentials() {
     AWS.config.region = region;
 
     var loginMap = {};
@@ -117,17 +95,22 @@ function getCognitoIdentityCredentials(){
     });
 }
 
+async function getCurrentLoggedInUser(poolData) {
+
+    // console.log(poolData);
+    const userPool = await new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    return userPool.getCurrentUser();
+}
+
 /*
 If user has logged in before, get the previous session so user doesn't need to log in again.
 */
-async function getCurrentLoggedInSession(poolData) {
+async function getCurrentLoggedInSession(cognitoUserObj) {
 
-    // console.log(AWS);
-    // console.log(AmazonCognitoIdentity);
-    // $("#loader").show();
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-    const cognitoUser = userPool.getCurrentUser();
+    // const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    // const cognitoUser = userPool.getCurrentUser();
 
+    const cognitoUser = cognitoUserObj.user;
     if (cognitoUser != null){
         cognitoUser.getSession(function(err, session) {
             if (err) {
@@ -136,8 +119,9 @@ async function getCurrentLoggedInSession(poolData) {
                 console.log('Session found! Logged in.');
                 console.log(session);
                 const idToken = session.getIdToken().getJwtToken();
+                cognitoUserObj.setId(idToken);
                 // getCognitoIdentityCredentials();
-                return idToken
+                // return idToken
             }
             // $("#loader").hide();
         });
@@ -148,34 +132,30 @@ async function getCurrentLoggedInSession(poolData) {
 
 }
 
-function logOut(user) {
+function logOut(cognitoUserObj) {
+    const user = cognitoUserObj.user;
     if (user != null) {
 
-        // $("#loader").show();
         user.signOut();
-        // switchToLogInView();
         console.log('Logged out!');
-        // $("#loader").hide();
+        cognitoUserObj.setUser(null)
     }
     else {
         console.log("No user logged in");
     }
 }
 
-async function verifyCode(user, verificationCode) {
+async function verifyCode(cognitoUserObj, verificationCode) {
 
+    const user = cognitoUserObj.user;
     user.confirmRegistration(verificationCode, true, function(err, result) {
         if (err) {
             console.log(err.message);
-        }else{
+        } else {
             console.log('Successfully verified code!');
-            // switchToLogInView();
         }
-
-        // $("#loader").hide();
     });
-    // }
 }
 
 export { registerUser, logIn, getCognitoIdentityCredentials,
-    getCurrentLoggedInSession, verifyCode, logOut };
+    getCurrentLoggedInSession, verifyCode, logOut, getCurrentLoggedInUser };
