@@ -61,9 +61,7 @@ function createValueCard(heading, habits) {
 
     habits.forEach(habit => {
         const li = document.createElement('li');
-        const checkbox = document.createElement('paper-checkbox');
-        checkbox.innerHTML = habit.name;
-        li.appendChild(checkbox);
+        li.innerHTML = habit.name;
         cardContentsList.appendChild(li);
     });
 
