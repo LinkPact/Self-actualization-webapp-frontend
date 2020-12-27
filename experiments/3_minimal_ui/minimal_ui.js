@@ -2,27 +2,10 @@ import { getS3JSON, putS3JSON } from "../../modules/s3_interaction.js";
 
 const s3BucketName = 'selfactualizationtest';
 const jsonPath = 'test.json';
-let habits = [
-    {
-        "name": "Eat vegetables",
-        "values": [
-            "Health"
-        ]
-    },
-    {
-        "name": "Take a walk",
-        "values": [
-            "Health"
-        ]
-    },
-    {
-        "name": "Donate $5 to charity",
-        "values": [
-            "Usefulness",
-            "Empathy"
-        ]
-    }
-];
+let data = {
+    "values": [],
+    "habits": []
+};
 
 // Setup identity pool
 AWS.config.region = 'eu-north-1'; // Region
@@ -32,19 +15,18 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 
 
 const s3 = new AWS.S3();
-let loadedEntries = ["Default entries"];
 
 async function loadFromDatabase(s3BucketName) {
-    loadedEntries = await getS3JSON(s3, s3BucketName, jsonPath);
-    updateHabitsDisplay(loadedEntries, habits);
+    data = await getS3JSON(s3, s3BucketName, jsonPath);
+    updateHabitsDisplay(data.values, data.habits);
 }
 
 // https://stackoverflow.com/questions/43376270/how-to-dynamically-populate-a-list-on-an-html-page
-function updateHabitsDisplay(entries, habits) {
+function updateHabitsDisplay(values, habits) {
     const container = document.getElementById("value-container");
     container.innerHTML = "";
 
-    entries.forEach(function(entry) {
+    values.forEach(function(entry) {
         const habitsForValue = habits.filter(habit => habit.values.includes(entry));
         container.appendChild(createValueCard(entry, habitsForValue));
     });
@@ -74,8 +56,9 @@ function addListeners() {
         const input = document.getElementById('value_input');
         const valueName = input.value;
         input.value = "";
-        loadedEntries.push(valueName);
-        updateHabitsDisplay(loadedEntries, habits);
+        data.values.push(valueName);
+        updateHabitsDisplay(data.values, data.habits);
+        putS3JSON(s3, s3BucketName, jsonPath, data);
     });
 
     document.getElementById('newHabitButton').addEventListener('click', () => {
@@ -86,12 +69,13 @@ function addListeners() {
         nameInput.value = "";
         valuesInput.value = "";
 
-        habits.push({
+        data.habits.push({
             "name": habitName,
             "values": habitValues
         });
 
-        updateHabitsDisplay(loadedEntries, habits);
+        updateHabitsDisplay(data.values, data.habits);
+        putS3JSON(s3, s3BucketName, jsonPath, data);
     });
 }
 
@@ -99,5 +83,5 @@ addListeners();
 
 window.onload = function() {
     loadFromDatabase(s3BucketName);
-    updateHabitsDisplay(loadedEntries, habits);
+    updateHabitsDisplay(data.values, data.habits);
 };
