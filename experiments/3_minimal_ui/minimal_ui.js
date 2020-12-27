@@ -5,21 +5,18 @@ const jsonPath = 'test.json';
 const habits = [
     {
         "name": "Eat vegetables",
-        "frequency": "daily",
         "values": [
             "Health"
         ]
     },
     {
         "name": "Take a walk",
-        "frequency": "daily",
         "values": [
             "Health"
         ]
     },
     {
         "name": "Donate $5 to charity",
-        "frequency": "monthly",
         "values": [
             "Usefulness",
             "Empathy"
