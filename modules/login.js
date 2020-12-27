@@ -25,7 +25,7 @@ async function registerUser(poolData, cognitoUserObj, email, password) {
     cognitoUserObj.setUser(user);
 }
 
-async function logIn(poolData, cognitoUserObj, username, password){
+async function logIn(poolData, cognitoUserObj, username, password) {
 
     let idToken = null;
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
@@ -133,12 +133,9 @@ async function getCurrentLoggedInSession(cognitoUserObj) {
 }
 
 function logOut(cognitoUserObj) {
-    const user = cognitoUserObj.user;
-    if (user != null) {
-
-        user.signOut();
+    if (cognitoUserObj.user != null) {
+        cognitoUserObj.logout();
         console.log('Logged out!');
-        cognitoUserObj.setUser(null)
     }
     else {
         console.log("No user logged in");
