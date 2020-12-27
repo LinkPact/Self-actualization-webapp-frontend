@@ -37,26 +37,16 @@ function createValueCard(value, habits) {
     const cardContents = document.createElement('div');
     cardContents.classList.add('card-content');
     const cardContentsList = document.createElement('ul');
-    const deleteValueButton = document.createElement('button');
-    deleteValueButton.innerHTML = 'Remove value';
-    deleteValueButton.addEventListener('click', () => {
-        onDeleteValueClicked(value);
-    });
 
     habits.forEach(habit => {
         const li = document.createElement('li');
-        const deleteHabitButton = document.createElement('button');
-        deleteHabitButton.innerHTML = 'x';
-        deleteHabitButton.addEventListener('click', () => {
-            onDeleteHabitClicked(habit);
-        });
         li.appendChild(document.createTextNode(habit.name));
-        li.appendChild(deleteHabitButton);
+        li.appendChild(createDeleteHabitButton(habit));
         cardContentsList.appendChild(li);
     });
 
     card.setAttribute('heading', value);
-    cardContents.appendChild(deleteValueButton);
+    cardContents.appendChild(createDeleteValueButton(value));
     cardContents.appendChild(cardContentsList);
     card.appendChild(cardContents);
 
@@ -83,6 +73,26 @@ function onDeleteValueClicked(value) {
         putS3JSON(s3, s3BucketName, jsonPath, data);
         updateHabitsDisplay(data.values, data.habits);
     }
+}
+
+function createDeleteValueButton(value) {
+    const deleteValueButton = document.createElement('button');
+    deleteValueButton.innerHTML = 'Remove value';
+    deleteValueButton.addEventListener('click', () => {
+        onDeleteValueClicked(value);
+    });
+
+    return deleteValueButton;
+}
+
+function createDeleteHabitButton(habit) {
+    const deleteHabitButton = document.createElement('button');
+    deleteHabitButton.innerHTML = 'x';
+    deleteHabitButton.addEventListener('click', () => {
+        onDeleteHabitClicked(habit);
+    });
+
+    return deleteHabitButton;
 }
 
 function addListeners() {
