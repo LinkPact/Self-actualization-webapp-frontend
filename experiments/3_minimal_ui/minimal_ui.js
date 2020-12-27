@@ -2,7 +2,7 @@ import { getS3JSON, putS3JSON } from "../../modules/s3_interaction.js";
 
 const s3BucketName = 'selfactualizationtest';
 const jsonPath = 'test.json';
-const habits = [
+let habits = [
     {
         "name": "Eat vegetables",
         "values": [
