@@ -32,23 +32,57 @@ function updateHabitsDisplay(values, habits) {
     });
 }
 
-function createValueCard(heading, habits) {
+function createValueCard(value, habits) {
     const card = document.createElement('paper-card');
     const cardContents = document.createElement('div');
     cardContents.classList.add('card-content');
     const cardContentsList = document.createElement('ul');
+    const deleteValueButton = document.createElement('button');
+    deleteValueButton.innerHTML = 'Remove value';
+    deleteValueButton.addEventListener('click', () => {
+        onDeleteValueClicked(value);
+    });
 
     habits.forEach(habit => {
         const li = document.createElement('li');
-        li.innerHTML = habit.name;
+        const deleteHabitButton = document.createElement('button');
+        deleteHabitButton.innerHTML = 'x';
+        deleteHabitButton.addEventListener('click', () => {
+            onDeleteHabitClicked(habit);
+        });
+        li.appendChild(document.createTextNode(habit.name));
+        li.appendChild(deleteHabitButton);
         cardContentsList.appendChild(li);
     });
 
-    card.setAttribute('heading', heading);
+    card.setAttribute('heading', value);
+    cardContents.appendChild(deleteValueButton);
     cardContents.appendChild(cardContentsList);
     card.appendChild(cardContents);
 
     return card;
+}
+
+function onDeleteHabitClicked(habit) {
+    let index = data.habits.indexOf(habit);
+
+    if (index !== -1) {
+        data.habits.splice(index, 1);
+
+        putS3JSON(s3, s3BucketName, jsonPath, data);
+        updateHabitsDisplay(data.values, data.habits);
+    }
+}
+
+function onDeleteValueClicked(value) {
+    let index = data.values.indexOf(value);
+
+    if (index !== -1) {
+        data.values.splice(index, 1);
+
+        putS3JSON(s3, s3BucketName, jsonPath, data);
+        updateHabitsDisplay(data.values, data.habits);
+    }
 }
 
 function addListeners() {
