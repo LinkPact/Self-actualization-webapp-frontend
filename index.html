@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" content="width=device-width,initial scale=1">
-    <title>Self-Actualization Web App</title>
+    <meta charset="UTF-8">
+    <title>S3 test</title>
+
+    <link href="style.css" rel="stylesheet">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.813.0.min.js" defer></script>
+    <script type="module" src="index.js"></script>
     <script type="module">
-        import "https://unpkg.com/@polymer/paper-checkbox/paper-checkbox.js?module";
+        import "https://unpkg.com/@polymer/paper-card/paper-card.js?module";
     </script>
 </head>
-
 <body>
-    <paper-checkbox>Test</paper-checkbox>
+
+<h1>Minimal UI</h1>
+
+<div>
+    <h3>Current values</h3>
+    <div id="value-container"></div>
+    <div>
+        <label for="value_input">Value name: </label><input type="text" id="value_input" name="Input value name">
+        <button id="newValueButton">Add new value</button>
+    </div>
+    <div>
+        <label for="habit_name_input">Habit name: </label><input type="text" id="habit_name_input" name="Input habit name">
+        <label for="habit_values_input">Values: </label><input type="test" id="habit_values_input" name="Input habit values">
+        <button id="newHabitButton">Add new habit</button>
+    </div>
+</div>
+
 </body>
 </html>
