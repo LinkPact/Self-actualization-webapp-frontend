@@ -23,6 +23,7 @@ const s3 = new AWS.S3();
 let cognitoUserObj = {
     user: null,
     id: null,
+    entries: null,
     setUser(user) {
         let loginMessage;
         if (user) {
@@ -38,26 +39,50 @@ let cognitoUserObj = {
     },
     setId(id) {
         this.id = id;
-        console.log(id);
+        // console.log(id);
         updateLoginState(this);
+        console.log(this.user.username);
+        this.loginCompleted();
     },
+    async loginCompleted() {
+        const loadedEntries = await getS3JSON(s3, s3BucketName, cognitoUserObj.user.username);
+        currentEntries = loadedEntries;
+        updateHabitsDisplay(currentEntries);
+    },
+    // setEntries(entries) {
+    //     this.entries = entries;
+    //     updateHabitsDisplay(entries);
+    // },
     logout() {
         this.user.signOut();
         this.id = null;
         this.user = null;
         updateLoginState(this);
+        currentEntries = [];
+        updateHabitsDisplay(currentEntries);
     }
 };
 
+let currentEntries = ["[Placeholder entry]"];
+
+function updateHabitsDisplay(entries) {
+    const listElem = document.getElementById("habits_list");
+    listElem.innerHTML = "";
+
+    entries.forEach(function(entry) {
+        const newItem = document.createElement('li');
+        newItem.appendChild(document.createTextNode(entry));
+        listElem.appendChild(newItem);
+    });
+}
+
 function updateLoginState(userObj) {
 
-    console.log(`Updating login state with user: ${userObj.user} and ID ${userObj.id}`);
+    // console.log(`Updating login state with user: ${userObj.user} and ID ${userObj.id}`);
 
     if (!userObj.user && !userObj.id) {
         document.getElementById('register_button').style.display = "block";
         document.getElementById('login_button').style.display = "block";
-        document.getElementById('create_bucket_button').style.display = "none";
-        document.getElementById('list_bucket_button').style.display = "none";
         document.getElementById('logout_button').style.display = "none";
         document.getElementById('verify_button').style.display = "none";
         document.getElementById('verification').style.display = "none";
@@ -65,8 +90,6 @@ function updateLoginState(userObj) {
     else if (userObj.user && !userObj.id) {
         document.getElementById('register_button').style.display = "none";
         document.getElementById('login_button').style.display = "none";
-        document.getElementById('create_bucket_button').style.display = "none";
-        document.getElementById('list_bucket_button').style.display = "none";
         document.getElementById('logout_button').style.display = "block";
         document.getElementById('verify_button').style.display = "block";
         document.getElementById('verification').style.display = "block";
@@ -74,8 +97,6 @@ function updateLoginState(userObj) {
     else {
         document.getElementById('register_button').style.display = "none";
         document.getElementById('login_button').style.display = "none";
-        document.getElementById('create_bucket_button').style.display = "block";
-        document.getElementById('list_bucket_button').style.display = "block";
         document.getElementById('logout_button').style.display = "block";
         document.getElementById('verify_button').style.display = "none";
         document.getElementById('verification').style.display = "none";
@@ -104,12 +125,12 @@ document
     .getElementById('login_button')
     .addEventListener('click',
         async function() {
-            await logIn(
+            logIn(
                 poolData,
                 cognitoUserObj,
                 document.getElementById('email').value,
                 document.getElementById('password').value
-            );
+            )
         });
 
 document
@@ -161,9 +182,53 @@ document
             console.log(cognitoUserObj);
         });
 
+document
+    .getElementById('newentry')
+    .addEventListener('click',
+        async function() {
+            console.log("New entry click");
+            const currText = document.getElementById('newentry_text').value;
+            document.getElementById('newentry_text').value = "";
+            currentEntries.push(currText);
+            updateHabitsDisplay(currentEntries);
+
+            let jsonPath;
+            if (cognitoUserObj.user && cognitoUserObj.user.username) {
+                jsonPath = cognitoUserObj.user.username;
+            }
+            else {
+                jsonPath = "default.json";
+            }
+
+            putS3JSON(s3, s3BucketName, jsonPath, currentEntries);
+        });
+
+document
+    .getElementById('clear_entries')
+    .addEventListener('click',
+        async function() {
+            console.log("Clear entries");
+            currentEntries = [];
+            putS3JSON(s3, s3BucketName, "default.json", currentEntries);
+            updateHabitsDisplay(currentEntries);
+        });
+
+document
+    .getElementById('refresh_entries')
+    .addEventListener('click',
+        async function()  {
+            console.log("Refresh entries");
+            const loadedEntries = await getS3JSON(s3, s3BucketName, cognitoUserObj.user.username);
+            console.log(currentEntries);
+            if (loadedEntries) {
+                currentEntries = loadedEntries;
+            }
+            updateHabitsDisplay(currentEntries);
+        });
+
 window.onload = async function() {
     // cognitoUserObj.user = await getCurrentLoggedInSession(poolData);
-    updateLoginState(cognitoUserObj)
+    updateLoginState(cognitoUserObj);
 };
 
 
