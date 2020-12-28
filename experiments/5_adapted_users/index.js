@@ -60,6 +60,17 @@ let cognitoUserObj = {
         updateLoginState(this);
         currentEntries = [];
         updateHabitsDisplay(currentEntries);
+    },
+    getState() {
+        if (!this.user) {
+            "Logged out"
+        }
+        else if (this.user && !this.id) {
+            "Unverified"
+        }
+        else {
+            "Logged in"
+        }
     }
 };
 
@@ -158,22 +169,6 @@ document
 //         });
 
 const s3BucketName = 'selfactualizationtest';
-document
-    .getElementById('create_bucket_button')
-    .addEventListener('click',
-        function() {
-            console.log("Create bucket object button clicked");
-            putS3JSON(s3, s3BucketName, cognitoUserObj.user.username, ["testcontent"]);
-        });
-
-document
-    .getElementById('list_bucket_button')
-    .addEventListener('click',
-        async function() {
-            console.log("List bucket object button clicked");
-            const output = await getS3JSON(s3, s3BucketName, cognitoUserObj.user.username);
-            console.log(output);
-        });
 
 document
     .getElementById('testprint')
