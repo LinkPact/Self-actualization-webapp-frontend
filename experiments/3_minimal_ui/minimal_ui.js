@@ -1,7 +1,7 @@
 import { getS3JSON, putS3JSON } from "../../modules/s3_interaction.js";
 
 const s3BucketName = 'selfactualizationtest';
-const jsonPath = 'test.json';
+const jsonPath = 'self-actualization-global-data.json';
 let data = {
     "values": [],
     "habits": []
@@ -17,8 +17,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const s3 = new AWS.S3();
 
 async function loadFromDatabase(s3BucketName) {
-    data = await getS3JSON(s3, s3BucketName, jsonPath);
-    updateHabitsDisplay(data.values, data.habits);
+    return await getS3JSON(s3, s3BucketName, jsonPath);
 }
 
 // https://stackoverflow.com/questions/43376270/how-to-dynamically-populate-a-list-on-an-html-page
@@ -125,7 +124,17 @@ function addListeners() {
 
 addListeners();
 
-window.onload = function() {
-    loadFromDatabase(s3BucketName);
+window.onload = async function() {
+    try {
+        data = await loadFromDatabase(s3BucketName);
+    } catch (ignored) { }
+
+    if (data.values === undefined || data.habits === undefined) {
+        data = {
+            "values": [],
+            "habits": []
+        }
+    }
+
     updateHabitsDisplay(data.values, data.habits);
 };
