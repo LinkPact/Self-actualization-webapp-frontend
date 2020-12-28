@@ -1,3 +1,11 @@
 paper-card {
     display: block;
 }
+
+label {
+    display: block;
+}
+
+textarea {
+    display: block;
+}
