@@ -1,4 +1,4 @@
-import { getS3JSON, putS3JSON } from "../../modules/s3_interaction.js";
+import { getS3JSON, putS3JSON } from "./modules/s3_interaction.js";
 
 const s3BucketName = 'selfactualizationtest';
 const jsonPath = 'self-actualization-global-data.json';
