@@ -17,7 +17,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const s3 = new AWS.S3();
 
 async function loadFromDatabase(s3BucketName) {
-    return await getS3JSON(s3, s3BucketName, jsonPath);
+    return getS3JSON(s3, s3BucketName, jsonPath);
 }
 
 // https://stackoverflow.com/questions/43376270/how-to-dynamically-populate-a-list-on-an-html-page
@@ -25,8 +25,8 @@ function updateHabitsDisplay(values, habits) {
     const container = document.getElementById("value-container");
     container.innerHTML = "";
 
-    values.forEach(function(entry) {
-        const habitsForValue = habits.filter(habit => habit.values.includes(entry));
+    values.forEach(entry => {
+        const habitsForValue = habits.filter(habit => habit.values.includes(entry.name));
         container.appendChild(createValueCard(entry, habitsForValue));
     });
 }
@@ -36,6 +36,8 @@ function createValueCard(value, habits) {
     const cardContents = document.createElement('div');
     cardContents.classList.add('card-content');
     const cardContentsList = document.createElement('ul');
+    const description = document.createElement('p');
+    description.innerHTML = value.description;
 
     habits.forEach(habit => {
         const li = document.createElement('li');
@@ -44,7 +46,8 @@ function createValueCard(value, habits) {
         cardContentsList.appendChild(li);
     });
 
-    card.setAttribute('heading', value);
+    card.setAttribute('heading', value.name);
+    cardContents.appendChild(description);
     cardContents.appendChild(createDeleteValueButton(value));
     cardContents.appendChild(cardContentsList);
     card.appendChild(cardContents);
@@ -96,10 +99,16 @@ function createDeleteHabitButton(habit) {
 
 function addListeners() {
     document.getElementById('newValueButton').addEventListener('click', () => {
-        const input = document.getElementById('value_input');
-        const valueName = input.value;
-        input.value = "";
-        data.values.push(valueName);
+        const nameInput = document.getElementById('value_name_input');
+        const descInput = document.getElementById('value_description_input');
+        const valueName = nameInput.value;
+        const description = descInput.value;
+        nameInput.value = "";
+        descInput.value = "";
+        data.values.push({
+            "name": valueName,
+            "description": description
+        });
         updateHabitsDisplay(data.values, data.habits);
         putS3JSON(s3, s3BucketName, jsonPath, data);
     });
