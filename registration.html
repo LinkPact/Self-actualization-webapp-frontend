@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration page</title>
+
+    <style>
+        label{
+            display: inline-block;
+            float: left;
+            clear: left;
+            width: 150px;
+            text-align: right;
+        }
+        /*input {*/
+        /*    display: inline-block;*/
+        /*    float: left;*/
+        /*}*/
+    </style>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.813.0.min.js"></script>
+    <script src="modules/amazon-cognito-identity.js"></script>
+</head>
+<body>
+
+    <h3>Register new user</h3>
+
+    <p>
+        First enter username and password and click "Register user". This should send
+        an email with the verification code to the entered email. Enter this number
+        and press "Verify user".
+    </p>
+
+    <p>
+        For error messages, please check the javascript console.
+    </p>
+
+    <div>
+        <label for="email">Email</label><input id="email">
+    </div>
+    <div>
+        <label for="password">Password</label><input id="password">
+    </div>
+    <div>
+        <label for="verification">Verification</label><input id="verification">
+    </div>
+
+    <div>
+        <button id="register_button">Register user</button>
+        <button id="verify_button">Verify user</button>
+    </div>
+
+    <div>
+        <a href="index.html">Back to main page</a>
+    </div>
+
+    <script type="module" src="registration.js"></script>
+</body>
+</html>
