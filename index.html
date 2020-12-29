@@ -6,6 +6,7 @@
 
     <link href="style.css" rel="stylesheet">
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.813.0.min.js" defer></script>
+    <script src="modules/amazon-cognito-identity.js"></script>
     <script type="module" src="index.js"></script>
     <script type="module">
         import "https://unpkg.com/@polymer/paper-card/paper-card.js?module";
@@ -15,7 +16,25 @@
 
 <h1>Minimal UI</h1>
 
-<a href="registration.html">Register new user</a>
+<div>
+    <h3>Login</h3>
+    <div>
+        <a href="registration.html">Register new user</a>
+    </div>
+
+    <label for="email">
+        Email:
+        <input type="text" id="email" name="Email" />
+    </label>
+
+    <label for="password">
+        Password:
+        <input type="text" id="password" name="Password" />
+    </label>
+
+    <button id="login_button">Login</button>
+    <button id="logout_button">Logout</button>
+</div>
 
 <div>
     <h3>Current values</h3>
