@@ -1,6 +1,6 @@
 class UserObject {
 
-    constructor(loginClass, logoutClass, loginStatusId) {
+    constructor(loginClass=null, logoutClass=null, loginStatusId=null) {
         this.user = null;
         this.id = null;
 
@@ -28,7 +28,6 @@ class UserObject {
 
     loginCompleted() {
         console.log(`Assigning json path: ${this.user.username}`);
-        // jsonPath = this.user.username;
         this.loginCompletedFunction();
         this.showLoginElements(true);
         document.getElementById(this.loginStatusId).innerText = this.getUsername();
