@@ -10,6 +10,7 @@
     <script type="module" src="index.js"></script>
     <script type="module">
         import "https://unpkg.com/@polymer/paper-card/paper-card.js?module";
+        import "https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module";
     </script>
 </head>
 <body>
@@ -41,21 +42,23 @@
 <div>
     <h3>Current values</h3>
     <div id="value-container"></div>
-    <div>
-        <label for="value_name_input">
-            Value name:
-            <input type="text" id="value_name_input" name="Input value name" />
-        </label>
-        
-        <label for="value_description_input">
-            Description:
-            <textarea id="value_description_input"></textarea>
-        </label>
+    <paper-dialog id="add_value_modal">
+        <div>
+            <label for="value_name_input">
+                Value name:
+                <input type="text" id="value_name_input" name="Input value name" />
+            </label>
+            
+            <label for="value_description_input">
+                Description:
+                <textarea id="value_description_input"></textarea>
+            </label>
 
-        <button id="newValueButton">Add new value</button>
-    </div>
+            <button id="newValueButton">Add new value</button>
+        </div>
+    </paper-dialog>
 
-    <div>
+    <paper-dialog id="add_habit_modal">
         <label for="habit_name_input">
             Habit name:
             <input type="text" id="habit_name_input" name="Input habit name" />
@@ -67,7 +70,10 @@
         </label>
 
         <button id="newHabitButton">Add new habit</button>
-    </div>
+    </paper-dialog>
+
+    <button class="floating-button-right" id="open_add_value_modal_button">+ Value</button>
+    <button class="floating-button-left" id="open_add_habit_modal_button">+ Habit</button>
 </div>
 
 </body>

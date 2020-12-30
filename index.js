@@ -212,6 +212,8 @@ function addListeners() {
         });
         updateHabitsDisplay(data.values, data.habits);
         putS3JSON(s3, s3BucketName, jsonPath, data);
+
+        document.getElementById('add_value_modal').close();
     });
 
     document.getElementById('newHabitButton').addEventListener('click', () => {
@@ -229,6 +231,8 @@ function addListeners() {
 
         updateHabitsDisplay(data.values, data.habits);
         putS3JSON(s3, s3BucketName, jsonPath, data);
+
+        document.getElementById('add_habit_modal').close();
     });
 
     document.getElementById('login_button').addEventListener('click', async () => {
@@ -247,6 +251,14 @@ function addListeners() {
         await logOut(cognitoUserObj);
         jsonPath = "self-actualization-global-data.json";
         loadFromDatabaseAndFill();
+    });
+
+    document.getElementById('open_add_value_modal_button').addEventListener('click', () => {
+        document.getElementById('add_value_modal').open();
+    });
+
+    document.getElementById('open_add_habit_modal_button').addEventListener('click', () => {
+        document.getElementById('add_habit_modal').open();
     });
 }
 
