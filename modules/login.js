@@ -1,3 +1,146 @@
+class UserObject {
+
+    constructor(loginClass, logoutClass, loginStatusId) {
+        this.user = null;
+        this.id = null;
+
+        this.loginClass = loginClass;
+        this.logoutClass = logoutClass;
+        this.loginStatusId = loginStatusId;
+    }
+
+    registerLoginCompletedFunction(loginCompletedFunc) {
+        this.loginCompletedFunction = loginCompletedFunc
+    }
+
+    setUser(user) {
+        this.user = user;
+    }
+
+    setId(id) {
+        this.id = id;
+        this.loginCompleted();
+    }
+
+    getUsername() {
+        return this.user.username;
+    }
+
+    loginCompleted() {
+        console.log(`Assigning json path: ${this.user.username}`);
+        // jsonPath = this.user.username;
+        this.loginCompletedFunction();
+        this.showLoginElements(true);
+        document.getElementById(this.loginStatusId).innerText = this.getUsername();
+    }
+
+    logout() {
+        this.user.signOut();
+        this.id = null;
+        this.user = null;
+        this.showLoginElements(false);
+        document.getElementById(this.loginStatusId).innerText = "Logged out";
+    }
+
+    showLoginElements(logged_in) {
+        const logged_out_elems = document.getElementsByClassName(this.logoutClass);
+        const logged_in_elems = document.getElementsByClassName(this.loginClass);
+
+        let login_elems_style;
+        let logout_elems_style;
+        if (logged_in) {
+            login_elems_style = "block";
+            logout_elems_style = "none";
+        }
+        else {
+            login_elems_style = "none";
+            logout_elems_style = "block";
+        }
+
+        for (let i = 0; i < logged_in_elems.length; i++) {
+            logged_in_elems[i].style.display = login_elems_style;
+        }
+
+        for (let i = 0; i < logged_out_elems.length; i++) {
+            logged_out_elems[i].style.display = logout_elems_style;
+        }
+    }
+}
+
+// let cognitoUserObj = {
+//     user: null,
+//     id: null,
+//     entries: null,
+//     setUser(user) {
+//         let loginMessage;
+//         if (user) {
+//             loginMessage = user.username;
+//         }
+//         else {
+//             loginMessage = "Logged out";
+//         }
+//         // document.getElementById('login_message').textContent = loginMessage;
+//         this.user = user;
+//         // updateLoginState(this);
+//     },
+//     setId(id) {
+//         this.id = id;
+//         console.log(this.user.username);
+//         this.loginCompleted();
+//     },
+//     loginCompleted() {
+//         console.log(`Assigning json path: ${this.user.username}`);
+//         jsonPath = this.user.username;
+//         loadFromDatabaseAndFill();
+//         this.show_login_elements(true);
+//         document.getElementById('login_status').innerText = jsonPath;
+//     },
+//     logout() {
+//         this.user.signOut();
+//         this.id = null;
+//         this.user = null;
+//         this.show_login_elements(false);
+//         document.getElementById('login_status').innerText = "Logged out";
+//     },
+//     show_login_elements(logged_in) {
+//         const logged_out_elems = document.getElementsByClassName('show_when_logged_out');
+//         const logged_in_elems = document.getElementsByClassName('show_when_logged_in');
+//
+//         let login_elems_style;
+//         let logout_elems_style;
+//         if (logged_in) {
+//             login_elems_style = "block";
+//             logout_elems_style = "none";
+//         }
+//         else {
+//             login_elems_style = "none";
+//             logout_elems_style = "block";
+//         }
+//
+//         for (let i = 0; i < logged_in_elems.length; i++) {
+//             logged_in_elems[i].style.display = login_elems_style;
+//         }
+//
+//         for (let i = 0; i < logged_out_elems.length; i++) {
+//             logged_out_elems[i].style.display = logout_elems_style;
+//         }
+//     },
+//     show_logout_elements() {
+//
+//     },
+//     getState() {
+//         if (!this.user) {
+//             "Logged out"
+//         }
+//         else if (this.user && !this.id) {
+//             "Unverified"
+//         }
+//         else {
+//             "Logged in"
+//         }
+//     }
+// };
+
 async function registerUser(poolData, cognitoUserObj, email, password) {
 
     const attributeList = [];
@@ -155,4 +298,4 @@ async function verifyCode(cognitoUserObj, verificationCode) {
 }
 
 export { registerUser, logIn, getCognitoIdentityCredentials,
-    getCurrentLoggedInSession, verifyCode, logOut, getCurrentLoggedInUser };
+    getCurrentLoggedInSession, verifyCode, logOut, getCurrentLoggedInUser, UserObject };
