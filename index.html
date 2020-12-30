@@ -18,22 +18,24 @@
 
 <div>
     <h3>Login</h3>
+
+    <div id="login_fields" class="show_when_logged_out">
+        <label for="email">
+            Email:
+            <input type="text" id="email" name="Email" />
+        </label>
+
+        <label for="password">
+            Password:
+            <input type="text" id="password" name="Password" />
+        </label>
+    </div>
+
+    <button id="login_button" class="show_when_logged_out" style='display:block'>Login</button>
+    <button id="logout_button" class="show_when_logged_in" style='display:none'>Logout</button>
     <div>
         <a href="registration.html">Register new user</a>
     </div>
-
-    <label for="email">
-        Email:
-        <input type="text" id="email" name="Email" />
-    </label>
-
-    <label for="password">
-        Password:
-        <input type="text" id="password" name="Password" />
-    </label>
-
-    <button id="login_button">Login</button>
-    <button id="logout_button">Logout</button>
 </div>
 
 <div>

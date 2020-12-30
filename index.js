@@ -50,13 +50,40 @@ let cognitoUserObj = {
     loginCompleted() {
         console.log(`Assigning json path: ${this.user.username}`);
         jsonPath = this.user.username;
-        // loadFromDatabase(s3BucketName);
         loadFromDatabaseAndFill();
+        this.show_login_elements(true);
     },
     logout() {
         this.user.signOut();
         this.id = null;
         this.user = null;
+        this.show_login_elements(false);
+    },
+    show_login_elements(logged_in) {
+        const logged_out_elems = document.getElementsByClassName('show_when_logged_out');
+        const logged_in_elems = document.getElementsByClassName('show_when_logged_in');
+
+        let login_elems_style;
+        let logout_elems_style;
+        if (logged_in) {
+            login_elems_style = "block";
+            logout_elems_style = "none";
+        }
+        else {
+            login_elems_style = "none";
+            logout_elems_style = "block";
+        }
+
+        for (let i = 0; i < logged_in_elems.length; i++) {
+            logged_in_elems[i].style.display = login_elems_style;
+        }
+
+        for (let i = 0; i < logged_out_elems.length; i++) {
+            logged_out_elems[i].style.display = logout_elems_style;
+        }
+    },
+    show_logout_elements() {
+
     },
     getState() {
         if (!this.user) {
