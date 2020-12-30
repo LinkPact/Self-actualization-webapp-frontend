@@ -9,3 +9,21 @@ label {
 textarea {
     display: block;
 }
+
+.floating-button-left {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    border-radius: 50%;
+}
+
+.floating-button-right {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 120px;
+    border-radius: 50%;
+}
