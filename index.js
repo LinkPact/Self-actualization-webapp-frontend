@@ -91,22 +91,11 @@ function createValueCard (value, habits) {
     return card
 }
 
-function onDeleteHabitClicked (habit) {
-    const index = data.habits.indexOf(habit)
+function onDeleteEntityClicked (value, targetData) {
+    const index = data[targetData].indexOf(value);
 
     if (index !== -1) {
-        data.habits.splice(index, 1)
-
-        putS3JSON(s3, s3BucketName, jsonPath(), data)
-        updateHabitsDisplay(data.values, data.habits)
-    }
-}
-
-function onDeleteValueClicked (value) {
-    const index = data.values.indexOf(value)
-
-    if (index !== -1) {
-        data.values.splice(index, 1)
+        data[targetData].splice(index, 1)
 
         putS3JSON(s3, s3BucketName, jsonPath(), data)
         updateHabitsDisplay(data.values, data.habits)
@@ -117,9 +106,8 @@ function createDeleteValueButton (value) {
     const deleteValueButton = document.createElement('button')
     deleteValueButton.innerHTML = 'Remove value'
     deleteValueButton.addEventListener('click', () => {
-        onDeleteValueClicked(value)
+        onDeleteEntityClicked(value, "values")
     })
-
     return deleteValueButton
 }
 
@@ -127,7 +115,7 @@ function createDeleteHabitButton (habit) {
     const deleteHabitButton = document.createElement('button')
     deleteHabitButton.innerHTML = 'x'
     deleteHabitButton.addEventListener('click', () => {
-        onDeleteHabitClicked(habit)
+        onDeleteEntityClicked(habit, "habits")
     })
 
     return deleteHabitButton
