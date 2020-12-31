@@ -27,7 +27,14 @@ class UserObject {
 
     loginCompleted () {
         console.log(`Assigning json path: ${this.user.username}`)
-        this.loginCompletedFunction()
+
+        if (this.loginCompletedFunction) {
+            this.loginCompletedFunction()
+        }
+        else {
+            console.log("No login completion function specified, skippig...")
+        }
+
         this.showLoginElements(true)
         document.getElementById(this.loginStatusId).innerText = this.getUsername()
     }
