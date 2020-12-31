@@ -167,6 +167,20 @@ function addListeners () {
         )
     })
 
+    function fireLogin(event) {
+        event.preventDefault()
+        if (event.key === 'Enter') {
+            document.getElementById('login_button').click()
+        }
+    }
+
+    document.getElementById('email')
+        .addEventListener('keyup', fireLogin)
+
+    document.getElementById('password')
+        .addEventListener('keyup', fireLogin)
+
+
     document.getElementById('logout_button').addEventListener('click', async () => {
         await logOut(cognitoUserObj)
         loadFromDatabaseAndFill()
