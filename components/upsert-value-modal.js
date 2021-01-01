@@ -28,7 +28,7 @@ class UpsertValueModal extends HTMLElement {
 
             <paper-dialog id="dialog">
                 <form>
-                    <h3>Add Value</h3>
+                    <h3 id="title">Add Value</h3>
 
                     <label for="name-input">
                         Name: <input type="text" id="name-input" />
@@ -83,7 +83,7 @@ class UpsertValueModal extends HTMLElement {
     }
 
     _addPrefills () {
-        this.shadowRoot.querySelector('h3').innerHTML = 'Edit Value'
+        this.shadowRoot.querySelector('#title').innerHTML = 'Edit Value'
 
         if (this.hasAttribute('prefill-name')) {
             this.shadowRoot.querySelector('#name-input').value = this.getAttribute('prefill-name')
