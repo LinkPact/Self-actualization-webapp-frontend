@@ -2,9 +2,9 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
 /**
  * Events:
- *      on-submit -- called when the user presses the submit button and passes user input in
- *                   event.detail.input
- *      on-close  -- called when the dialog is closed
+ *      saw.modal-submit -- called when the user presses the submit button and passes user input
+ *                            in event.detail.input
+ *      saw.modal-close  -- called when the dialog is closed
  */
 class SawAddValueModal extends HTMLElement {
     constructor () {
@@ -51,7 +51,7 @@ class SawAddValueModal extends HTMLElement {
              */
             event.preventDefault()
 
-            this.dispatchEvent(new CustomEvent('on-submit', {
+            this.dispatchEvent(new CustomEvent('saw.modal-submit', {
                 detail: {
                     input: {
                         name: this.shadowRoot.querySelector('#name-input').value,
@@ -64,7 +64,7 @@ class SawAddValueModal extends HTMLElement {
         })
 
         dialog.addEventListener('iron-overlay-closed', () =>
-            this.dispatchEvent(new CustomEvent('on-close')))
+            this.dispatchEvent(new CustomEvent('saw.modal-close')))
 
         dialog.open()
     }
