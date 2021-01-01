@@ -5,5 +5,6 @@ document.getElementById('open-add-value-modal-button').addEventListener('click',
     modal.addEventListener('on-submit', (e) => {
         console.log(e.detail.input)
     })
+    modal.addEventListener('on-close', (e) => document.body.removeChild(modal))
     document.body.appendChild(modal)
 })
