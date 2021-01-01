@@ -1,5 +1,10 @@
 import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
+/**
+ * Events:
+ *      on-submit -- called when the user presses the submit button and passes user input in
+ *                   event.detail.input
+ */
 class SawAddValueModal extends HTMLElement {
     connectedCallback () {
         const dialog = this._createModal()
@@ -28,9 +33,16 @@ class SawAddValueModal extends HTMLElement {
         descInput.setAttribute('id', 'value_description_input')
         addButton.appendChild(document.createTextNode('Add value'))
 
-        // TODO: Pass callback with attribute
         addButton.addEventListener('click', () => {
-            console.log('clicked')
+            this.dispatchEvent(new CustomEvent('on-submit', {
+                detail: {
+                    input: {
+                        name: nameInput.value,
+                        description: descInput.value
+                    }
+                }
+            }))
+            this._onClose()
         })
 
         dialog.addEventListener('iron-overlay-closed', this._onClose.bind(this))
