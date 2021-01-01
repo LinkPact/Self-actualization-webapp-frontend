@@ -2,9 +2,9 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
 class SawAddValueModal extends HTMLElement {
     connectedCallback () {
-        const dialog = this._createModal()
-        this.appendChild(dialog)
-        dialog.open()
+        this.dialog = this._createModal()
+        this.appendChild(this.dialog)
+        this.dialog.open()
     }
 
     _createModal () {
@@ -32,6 +32,8 @@ class SawAddValueModal extends HTMLElement {
         addButton.addEventListener('click', () => {
             console.log('clicked')
         })
+
+        dialog.addEventListener('iron-overlay-closed', () => this.parentElement.removeChild(this))
 
         nameLabel.appendChild(nameInput)
         descLabel.appendChild(descInput)
