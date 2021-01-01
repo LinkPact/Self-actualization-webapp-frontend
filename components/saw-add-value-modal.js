@@ -33,6 +33,9 @@ class SawAddValueModal extends HTMLElement {
         descInput.setAttribute('id', 'value_description_input')
         addButton.appendChild(document.createTextNode('Add value'))
 
+        nameLabel.style.display = 'block'
+        descInput.style.display = 'block'
+
         addButton.addEventListener('click', () => {
             this.dispatchEvent(new CustomEvent('on-submit', {
                 detail: {
