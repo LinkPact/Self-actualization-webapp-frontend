@@ -6,9 +6,14 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  *                   event.detail.input
  */
 class SawAddValueModal extends HTMLElement {
+    constructor () {
+        super()
+        this.attachShadow({ mode: 'open' })
+    }
+
     connectedCallback () {
         const dialog = this._createModal()
-        this.appendChild(dialog)
+        this.shadowRoot.appendChild(dialog)
         dialog.open()
     }
 
