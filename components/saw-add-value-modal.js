@@ -43,11 +43,11 @@ class SawAddValueModal extends HTMLElement {
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
 
-        this.shadowRoot.querySelector('form').addEventListener('onsubmit', (event) => {
+        this.shadowRoot.querySelector('form').addEventListener('submit', (event) => {
             /*
              * By default, a submitted form has action="self" which means that the page will be
              * refreshed. We do not want that so we call preventDefault which prevents the default
-             * event handler for 'onsubmit' events on this form to be triggered.
+             * event handler for 'submit' events on this form to be triggered.
              */
             event.preventDefault()
 
