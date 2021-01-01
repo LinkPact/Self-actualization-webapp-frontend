@@ -1,6 +1,11 @@
 import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
 /**
+ * Attributes:
+ *
+ *      prefill-name        -- value to prefill name input field with
+ *      prefill-description -- value to prefill description input field with
+ *
  * Events:
  *      saw.modal-submit -- called when the user presses the submit button and passes user input
  *                            in event.detail.input
@@ -66,10 +71,31 @@ class UpsertValueModal extends HTMLElement {
         dialog.addEventListener('iron-overlay-closed', () =>
             this.dispatchEvent(new CustomEvent('saw.modal-close')))
 
+        if (this._hasAPrefillAttribute()) {
+            this._addPrefills()
+        }
+
         dialog.open()
+    }
+
+    _hasAPrefillAttribute () {
+        return this.hasAttribute('prefill-name') || this.hasAttribute('prefill-description')
+    }
+
+    _addPrefills () {
+        this.shadowRoot.querySelector('h3').innerHTML = 'Edit Value'
+
+        if (this.hasAttribute('prefill-name')) {
+            this.shadowRoot.querySelector('#name-input').value = this.getAttribute('prefill-name')
+        }
+
+        if (this.hasAttribute('prefill-description')) {
+            this.shadowRoot.querySelector('#description-input').value =
+                this.getAttribute('prefill-description')
+        }
     }
 }
 
-customElements.define('saw-add-value-modal', UpsertValueModal)
+customElements.define('saw-upsert-value-modal', UpsertValueModal)
 
 export { UpsertValueModal }
