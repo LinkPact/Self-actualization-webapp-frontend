@@ -33,7 +33,7 @@ class SawAddValueModal extends HTMLElement {
             console.log('clicked')
         })
 
-        dialog.addEventListener('iron-overlay-closed', () => this.parentElement.removeChild(this))
+        dialog.addEventListener('iron-overlay-closed', this._onClose.bind(this))
 
         nameLabel.appendChild(nameInput)
         descLabel.appendChild(descInput)
@@ -44,6 +44,10 @@ class SawAddValueModal extends HTMLElement {
         dialog.appendChild(wrapper)
 
         return dialog
+    }
+
+    _onClose () {
+        this.parentElement.removeChild(this)
     }
 }
 
