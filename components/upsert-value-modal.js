@@ -1,6 +1,14 @@
 import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
 /**
+ * A modal window for adding or editing a value.
+ *
+ * - Use the event 'saw.modal-submit' to retrieve the values entered by the user using
+ *   `event.detail.input`, which is an object containg the properties 'name' and 'description'.
+ * - Should be created using createElement('saw-upsert-value-modal').
+ * - Is opened as soon as it is connected to the DOM and should for most use-cases be removed
+ *   from the DOM when closed using the event 'saw.modal-close'.
+ *
  * Attributes:
  *
  *      prefill-name        -- value to prefill name input field with
