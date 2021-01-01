@@ -72,6 +72,54 @@ class UserObject {
 }
 
 async function registerUser (poolData, cognitoUserObj, email, password) {
+
+    // const cognito = new AWS.CognitoIdentityServiceProvider(poolData)
+    //
+    // let params = {}
+    // params['ClientId'] = poolData['ClientId']
+    // params['Username'] = email
+    // params['Password'] = password
+    //
+    // console.log(poolData)
+    //
+    // const dataEmail = {
+    //     Name: 'email',
+    //     Value: email
+    // }
+    //
+    // // const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData)
+    // const attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail)
+
+    // console.log('test')
+    // const result = await cognito.signUp(params, callback=function(err, results) {
+    //
+    // }).promise()
+    // let result
+    // try {
+    // cognito.signUp()
+
+    // const result = await cognito.signUp(email, password, [attributeEmail], null,
+    //     function(err, result) {
+    //     if (err) {
+    //         console.log('Unsuccessful registration')
+    //     }
+    //     else {
+    //         console.log('Successful registration')
+    //     }
+    // }).promise()
+
+
+    //     console.log(result)
+    // } catch (e) {
+    //     console.log(e)
+    // }
+    // cognitoUserObj.setUser(result.)
+
+    console.log('test')
+
+
+    // console.log(result)
+
     const attributeList = []
     const dataEmail = {
         Name: 'email',
@@ -84,8 +132,8 @@ async function registerUser (poolData, cognitoUserObj, email, password) {
 
     const user = userPool.signUp(email, password, attributeList, null, function (err, result) {
         if (err) {
-            console.log(err.message)
-            console.log(err.stack)
+            alert(err.message)
+            // console.log(err.stack)
         } else {
             console.log('Registration Successful!')
             console.log('Username is: ' + email)
@@ -94,7 +142,28 @@ async function registerUser (poolData, cognitoUserObj, email, password) {
             return result.user
         }
     })
+
     cognitoUserObj.setUser(user)
+}
+
+async function resendVerification(poolData, cognitoUserObj, username, password) {
+
+    const cognito = new AWS.CognitoIdentityServiceProvider(poolData)
+
+    let params = {}
+    params['ClientId'] = poolData['ClientId']
+    params['Username'] = username
+    // param['Password'] = password
+
+    const result = cognito.resendConfirmationCode(params, function(err, result) {
+        if (err) {
+            alert(err)
+        }
+        else {
+            console.log(result)
+            alert(`If there is an account for the email ${username} a verification message has been sent there`)
+        }
+    })
 }
 
 async function logIn (poolData, cognitoUserObj, username, password) {
@@ -215,5 +284,5 @@ async function verifyCode (cognitoUserObj, verificationCode) {
 
 export {
     registerUser, logIn, getCurrentLoggedInSession, verifyCode, logOut,
-    getCurrentLoggedInUser, UserObject
+    getCurrentLoggedInUser, UserObject, resendVerification
 }

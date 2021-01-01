@@ -1,4 +1,4 @@
-import { logIn, registerUser, verifyCode, UserObject } from './modules/login.js'
+import { logIn, registerUser, verifyCode, UserObject, resendVerification } from './modules/login.js'
 
 // Setup identity pool
 AWS.config.region = 'eu-north-1' // Region
@@ -35,7 +35,6 @@ document
     .getElementById('verify_button')
     .addEventListener('click',
         async function () {
-            console.log('Before login')
             await logIn(
                 poolData,
                 cognitoUserObj,
@@ -48,4 +47,38 @@ document
                 document.getElementById('verification').value
             )
             console.log('Verifycode function done')
+        })
+
+document
+    .getElementById('resend_button')
+    .addEventListener('click',
+        async function () {
+            // console.log('Resend verification')
+            // const params = {}
+            resendVerification(
+                poolData,
+                cognitoUserObj,
+                document.getElementById('email').value,
+                document.getElementById('password').value
+            )
+            // const output = await cognitoidentityserviceprovider.resendConfirmationCode(params, (err, data) => {
+            //     if (err) {
+            //         console.log(err, err.stack)
+            //     }
+            //     else {
+            //         console.log(data)
+            //     }
+            // })
+            // await logIn(
+            //     poolData,
+            //     cognitoUserObj,
+            //     document.getElementById('email').value,
+            //     document.getElementById('password').value
+            // )
+            // console.log('Logged in')
+            // await verifyCode(
+            //     cognitoUserObj,
+            //     document.getElementById('verification').value
+            // )
+            // console.log('Verifycode function done')
         })
