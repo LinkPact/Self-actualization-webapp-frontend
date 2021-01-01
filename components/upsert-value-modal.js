@@ -6,7 +6,7 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  *                            in event.detail.input
  *      saw.modal-close  -- called when the dialog is closed
  */
-class SawAddValueModal extends HTMLElement {
+class UpsertValueModal extends HTMLElement {
     constructor () {
         super()
         this.attachShadow({ mode: 'open' })
@@ -70,6 +70,6 @@ class SawAddValueModal extends HTMLElement {
     }
 }
 
-customElements.define('saw-add-value-modal', SawAddValueModal)
+customElements.define('saw-add-value-modal', UpsertValueModal)
 
-export { SawAddValueModal }
+export { UpsertValueModal }

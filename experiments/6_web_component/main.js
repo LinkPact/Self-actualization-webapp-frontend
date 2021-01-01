@@ -1,7 +1,7 @@
-import '../../components/saw-add-value-modal.js'
+import '../../components/upsert-value-modal.js'
 
-document.getElementById('open-add-value-modal-button').addEventListener('click', () => {
-    const modal = document.createElement('saw-add-value-modal')
+document.getElementById('open-upsert-value-modal-button').addEventListener('click', () => {
+    const modal = document.createElement('saw-upsert-value-modal')
     modal.addEventListener('saw.modal-submit', (e) => {
         console.log(e.detail.input)
     })
