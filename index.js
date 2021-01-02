@@ -2,6 +2,7 @@ import { getS3JSON, putS3JSON } from './modules/s3_interaction.js'
 import { logIn, logOut, UserObject } from './modules/login.js'
 import './components/upsert-value-modal.js'
 import './components/upsert-habit-modal.js'
+import './components/value-card.js'
 
 const s3BucketName = 'selfactualizationtest'
 
@@ -64,37 +65,28 @@ function updateHabitsDisplay (values, habits) {
     container.innerHTML = ''
 
     values.forEach(entry => {
-        const habitsForValue = habits.filter(habit => habit.values.includes(entry.name))
+        const habitsForValue = data.habits.filter(habit => habit.values.includes(entry.name))
         container.appendChild(createValueCard(entry, habitsForValue))
     })
 }
 
 function createValueCard (value, habits) {
-    const card = document.createElement('paper-card')
-    const cardContents = document.createElement('div')
-    cardContents.classList.add('card-content')
-    const cardContentsList = document.createElement('ul')
-    const description = document.createElement('p')
-    description.innerHTML = value.description
+    const card = document.createElement('saw-value-card')
 
-    habits.forEach(habit => {
-        const li = document.createElement('li')
-        li.appendChild(document.createTextNode(habit.name))
-        li.appendChild(createDeleteHabitButton(habit))
-        cardContentsList.appendChild(li)
+    card.value = value
+    card.habits = habits
+    card.addEventListener('saw.valuecard-delete-value-click', e => {
+        onDeleteEntityClicked(value, 'values')
     })
-
-    card.setAttribute('heading', value.name)
-    cardContents.appendChild(description)
-    cardContents.appendChild(createDeleteValueButton(value))
-    cardContents.appendChild(cardContentsList)
-    card.appendChild(cardContents)
+    card.addEventListener('saw.valuecard-delete-habit-click', e => {
+        onDeleteEntityClicked(e.detail.habit, 'habits')
+    })
 
     return card
 }
 
 function onDeleteEntityClicked (value, targetData) {
-    const index = data[targetData].indexOf(value);
+    const index = data[targetData].indexOf(value)
 
     if (index !== -1) {
         data[targetData].splice(index, 1)
@@ -102,25 +94,6 @@ function onDeleteEntityClicked (value, targetData) {
         putS3JSON(s3, s3BucketName, jsonPath(), data)
         updateHabitsDisplay(data.values, data.habits)
     }
-}
-
-function createDeleteValueButton (value) {
-    const deleteValueButton = document.createElement('button')
-    deleteValueButton.innerHTML = 'Remove value'
-    deleteValueButton.addEventListener('click', () => {
-        onDeleteEntityClicked(value, "values")
-    })
-    return deleteValueButton
-}
-
-function createDeleteHabitButton (habit) {
-    const deleteHabitButton = document.createElement('button')
-    deleteHabitButton.innerHTML = 'x'
-    deleteHabitButton.addEventListener('click', () => {
-        onDeleteEntityClicked(habit, "habits")
-    })
-
-    return deleteHabitButton
 }
 
 function createUpsertValueModal () {
@@ -165,7 +138,7 @@ function addListeners () {
         )
     })
 
-    function fireLogin(event) {
+    function fireLogin (event) {
         event.preventDefault()
         if (event.key === 'Enter') {
             document.getElementById('login_button').click()
