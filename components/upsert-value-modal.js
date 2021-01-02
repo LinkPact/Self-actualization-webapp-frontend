@@ -10,13 +10,13 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  *   from the DOM when closed using the event 'saw.modal-close'.
  *
  * Attributes:
- * - prefill-name           value to prefill name input field with
- * - prefill-description    value to prefill description input field with
+ * - prefill-name           text to prefill name input field with
+ * - prefill-description    text to prefill description input field with
  *
  * Events:
- * - saw.modal-submit   called when the user presses the submit button and passes user input
+ * - saw.modal-submit   dispatched when the user presses the submit button and passes user input
  *                      in event.detail.input
- * - saw.modal-close    called when the dialog is closed
+ * - saw.modal-close    dispatched when the modal is closed
  */
 class UpsertValueModal extends HTMLElement {
     constructor () {
