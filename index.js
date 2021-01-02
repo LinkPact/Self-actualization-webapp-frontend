@@ -1,5 +1,7 @@
 import { getS3JSON, putS3JSON } from './modules/s3_interaction.js'
 import { logIn, logOut, UserObject } from './modules/login.js'
+import './components/upsert-value-modal.js'
+import './components/upsert-habit-modal.js'
 
 const s3BucketName = 'selfactualizationtest'
 
@@ -121,43 +123,39 @@ function createDeleteHabitButton (habit) {
     return deleteHabitButton
 }
 
+function createUpsertValueModal () {
+    return initUpsertModal(document.createElement('saw-upsert-value-modal'))
+}
+
+function createUpsertHabitModal () {
+    return initUpsertModal(document.createElement('saw-upsert-habit-modal'))
+}
+
+function initUpsertModal (modal) {
+    modal.addEventListener('saw.modal-close', () => document.body.removeChild(modal))
+    document.body.appendChild(modal)
+    return modal
+}
+
+function onAddValue (event) {
+    data.values.push({
+        name: event.detail.input.name,
+        description: event.detail.input.description
+    })
+    updateHabitsDisplay(data.values, data.habits)
+    putS3JSON(s3, s3BucketName, jsonPath(), data)
+}
+
+function onAddHabit (event) {
+    data.habits.push({
+        name: event.detail.input.name,
+        values: event.detail.input.values
+    })
+    updateHabitsDisplay(data.values, data.habits)
+    putS3JSON(s3, s3BucketName, jsonPath(), data)
+}
+
 function addListeners () {
-    document.getElementById('newValueButton').addEventListener('click', () => {
-        const nameInput = document.getElementById('value_name_input')
-        const descInput = document.getElementById('value_description_input')
-        const valueName = nameInput.value
-        const description = descInput.value
-        nameInput.value = ''
-        descInput.value = ''
-        data.values.push({
-            name: valueName,
-            description: description
-        })
-        updateHabitsDisplay(data.values, data.habits)
-        putS3JSON(s3, s3BucketName, jsonPath(), data)
-
-        document.getElementById('add_value_modal').close()
-    })
-
-    document.getElementById('newHabitButton').addEventListener('click', () => {
-        const nameInput = document.getElementById('habit_name_input')
-        const valuesInput = document.getElementById('habit_values_input')
-        const habitName = nameInput.value
-        const habitValues = valuesInput.value.split(',').map(value => value.trim())
-        nameInput.value = ''
-        valuesInput.value = ''
-
-        data.habits.push({
-            name: habitName,
-            values: habitValues
-        })
-
-        updateHabitsDisplay(data.values, data.habits)
-        putS3JSON(s3, s3BucketName, jsonPath(), data)
-
-        document.getElementById('add_habit_modal').close()
-    })
-
     document.getElementById('login_button').addEventListener('click', async () => {
         await logIn(
             poolData,
@@ -180,18 +178,17 @@ function addListeners () {
     document.getElementById('password')
         .addEventListener('keyup', fireLogin)
 
-
     document.getElementById('logout_button').addEventListener('click', async () => {
         await logOut(cognitoUserObj)
         loadFromDatabaseAndFill()
     })
 
-    document.getElementById('open_add_value_modal_button').addEventListener('click', () => {
-        document.getElementById('add_value_modal').open()
-    })
+    document.getElementById('open_add_value_modal_button').addEventListener('click', () =>
+        createUpsertValueModal().addEventListener('saw.modal-submit', onAddValue)
+    )
 
     document.getElementById('open_add_habit_modal_button').addEventListener('click', () => {
-        document.getElementById('add_habit_modal').open()
+        createUpsertHabitModal().addEventListener('saw.modal-submit', onAddHabit)
     })
 }
 
