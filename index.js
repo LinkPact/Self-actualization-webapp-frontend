@@ -6,6 +6,10 @@ import './components/value-card.js'
 
 const s3BucketName = 'selfactualizationtest'
 
+/*
+ * TODO: Add store module that allows registering callbacks when its data changes, so we do not have
+ *       to call putS3JSON and updateHabitDisplay every time we modify the data.
+ */
 let data = {
     values: [],
     habits: []
@@ -76,10 +80,10 @@ function createValueCard (value, habits) {
     card.value = value
     card.habits = habits
     card.addEventListener('saw.valuecard-delete-value-click', e => {
-        onDeleteEntityClicked(value, 'values')
+        onDeleteValueClicked(value)
     })
     card.addEventListener('saw.valuecard-delete-habit-click', e => {
-        onDeleteEntityClicked(e.detail.habit, 'habits')
+        onDeleteHabitClicked(value, e.detail.habit)
     })
     card.addEventListener('saw.valuecard-edit-value-click', e => {
         onEditValueClicked(value, e)
@@ -158,14 +162,35 @@ function onEditValueClicked (value) {
     openEditValueModal(value)
 }
 
-function onDeleteEntityClicked (value, targetData) {
-    const index = data[targetData].indexOf(value)
+function onDeleteValueClicked (value) {
+    removeIfPresent(data.values, value)
+
+    putS3JSON(s3, s3BucketName, jsonPath(), data)
+    updateHabitsDisplay(data.values, data.habits)
+
+    console.log(data)
+}
+
+function onDeleteHabitClicked (value, habit) {
+    // Unlink the habit from the value
+    removeIfPresent(habit.values, value.name)
+
+    // Remove the habit if it has no more values linking to it
+    if (habit.values.length === 0) {
+        removeIfPresent(data.habits, habit)
+    }
+
+    putS3JSON(s3, s3BucketName, jsonPath(), data)
+    updateHabitsDisplay(data.values, data.habits)
+
+    console.log(data)
+}
+
+function removeIfPresent (arr, element) {
+    const index = arr.indexOf(element)
 
     if (index !== -1) {
-        data[targetData].splice(index, 1)
-
-        putS3JSON(s3, s3BucketName, jsonPath(), data)
-        updateHabitsDisplay(data.values, data.habits)
+        arr.splice(index, 1)
     }
 }
 
