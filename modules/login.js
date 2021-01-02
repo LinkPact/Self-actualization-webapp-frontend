@@ -36,7 +36,9 @@ class UserObject {
         }
 
         this.showLoginElements(true)
-        document.getElementById(this.loginStatusId).innerText = this.getUsername()
+        if (this.loginStatusId) {
+            document.getElementById(this.loginStatusId).innerText = this.getUsername()
+        }
     }
 
     logout () {
@@ -44,7 +46,9 @@ class UserObject {
         this.id = null
         this.user = null
         this.showLoginElements(false)
-        document.getElementById(this.loginStatusId).innerText = 'Logged out'
+        if (this.loginStatusId) {
+            document.getElementById(this.loginStatusId).innerText = 'Logged out'
+        }
     }
 
     showLoginElements (loggedIn) {
@@ -73,53 +77,6 @@ class UserObject {
 
 async function registerUser (poolData, cognitoUserObj, email, password) {
 
-    // const cognito = new AWS.CognitoIdentityServiceProvider(poolData)
-    //
-    // let params = {}
-    // params['ClientId'] = poolData['ClientId']
-    // params['Username'] = email
-    // params['Password'] = password
-    //
-    // console.log(poolData)
-    //
-    // const dataEmail = {
-    //     Name: 'email',
-    //     Value: email
-    // }
-    //
-    // // const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData)
-    // const attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail)
-
-    // console.log('test')
-    // const result = await cognito.signUp(params, callback=function(err, results) {
-    //
-    // }).promise()
-    // let result
-    // try {
-    // cognito.signUp()
-
-    // const result = await cognito.signUp(email, password, [attributeEmail], null,
-    //     function(err, result) {
-    //     if (err) {
-    //         console.log('Unsuccessful registration')
-    //     }
-    //     else {
-    //         console.log('Successful registration')
-    //     }
-    // }).promise()
-
-
-    //     console.log(result)
-    // } catch (e) {
-    //     console.log(e)
-    // }
-    // cognitoUserObj.setUser(result.)
-
-    console.log('test')
-
-
-    // console.log(result)
-
     const attributeList = []
     const dataEmail = {
         Name: 'email',
@@ -128,6 +85,7 @@ async function registerUser (poolData, cognitoUserObj, email, password) {
 
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData)
     const attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail)
+    console.log(attributeEmail)
     attributeList.push(attributeEmail)
 
     const user = userPool.signUp(email, password, attributeList, null, function (err, result) {
@@ -138,7 +96,7 @@ async function registerUser (poolData, cognitoUserObj, email, password) {
             console.log('Registration Successful!')
             console.log('Username is: ' + email)
             console.log('Please enter the verification code sent to your Email.')
-            alert("An registration email should now have been sent to the entered email, fill in the verification code and click 'Verify code'")
+            alert("An registration email should now have been sent to the entered email, fill in the verification code and click the verification button")
             return result.user
         }
     })
@@ -146,7 +104,7 @@ async function registerUser (poolData, cognitoUserObj, email, password) {
     cognitoUserObj.setUser(user)
 }
 
-async function resendVerification(poolData, cognitoUserObj, username, password) {
+async function resendVerification(poolData, cognitoUserObj, username, onSuccess=null) {
 
     const cognito = new AWS.CognitoIdentityServiceProvider(poolData)
 
@@ -161,7 +119,9 @@ async function resendVerification(poolData, cognitoUserObj, username, password) 
         }
         else {
             console.log(result)
-            alert(`If there is an account for the email ${username} a verification message has been sent there`)
+            if (onSuccess) {
+                onSuccess(username)
+            }
         }
     })
 }
@@ -171,7 +131,7 @@ async function logIn (poolData, cognitoUserObj, username, password) {
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData)
 
     if (!username || !password) {
-        console.log('Please enter Username and Password!')
+        console.log('login: Please enter Username and Password!')
     } else {
         const authenticationData = {
             Username: username,
@@ -188,51 +148,22 @@ async function logIn (poolData, cognitoUserObj, username, password) {
 
         user.authenticateUser(authenticationDetails, {
             onSuccess: function (result) {
-                console.log('Logged in!')
+                console.log('login: Logged in!')
 
                 idToken = result.getIdToken().getJwtToken()
-                console.log('Printing ID token')
+                console.log('login: Printing ID token')
                 cognitoUserObj.setId(idToken)
                 return true
             },
 
             onFailure: function (err) {
-                console.log(err.message)
+                console.log(err)
                 return false
             }
 
         })
     }
 }
-
-/*
-This method will get temporary credentials for AWS using the IdentityPoolId and the Id Token recieved from AWS Cognito authentication provider.
-*/
-// function getCognitoIdentityCredentials () {
-//     AWS.config.region = region
-//
-//     const loginMap = {}
-//     loginMap['cognito-idp.' + region + '.amazonaws.com/' + userPoolId] = idToken
-//
-//     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-//         IdentityPoolId: identityPoolId,
-//         Logins: loginMap
-//     })
-//
-//     AWS.config.credentials.clearCachedId()
-//
-//     AWS.config.credentials.get(function (err) {
-//         if (err) {
-//             console.log(err.message)
-//         } else {
-//             console.log('AWS Access Key: ' + AWS.config.credentials.accessKeyId)
-//             console.log('AWS Secret Key: ' + AWS.config.credentials.secretAccessKey)
-//             console.log('AWS Session Token: ' + AWS.config.credentials.sessionToken)
-//         }
-//
-//         // $("#loader").hide();
-//     })
-// }
 
 async function getCurrentLoggedInUser (poolData) {
     // console.log(poolData);
@@ -251,23 +182,23 @@ async function getCurrentLoggedInSession (cognitoUserObj) {
             if (err) {
                 console.log(err.message)
             } else {
-                console.log('Session found! Logged in.')
+                console.log('login: Session found! Logged in.')
                 console.log(session)
                 const idToken = session.getIdToken().getJwtToken()
                 cognitoUserObj.setId(idToken)
             }
         })
     } else {
-        console.log('Session expired. Please log in again.')
+        console.log('login: Session expired. Please log in again.')
     }
 }
 
 function logOut (cognitoUserObj) {
     if (cognitoUserObj.user != null) {
         cognitoUserObj.logout()
-        console.log('Logged out!')
+        console.log('login: Logged out!')
     } else {
-        console.log('No user logged in')
+        console.log('login: No user logged in')
     }
 }
 
@@ -275,9 +206,9 @@ async function verifyCode (cognitoUserObj, verificationCode) {
     const user = cognitoUserObj.user
     user.confirmRegistration(verificationCode, true, function (err, result) {
         if (err) {
-            console.log(err.message)
+            alert(err.message)
         } else {
-            console.log('Successfully verified code!')
+            console.log('login: Successfully verified user!')
         }
     })
 }

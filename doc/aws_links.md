@@ -20,3 +20,5 @@ https://stackoverflow.com/questions/61028751/missing-credentials-in-config-if-us
 
 * Using Cognito for keeping track of users: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-app-integration.html
 * Demo: https://1billiontech.com/blog_User_Authentication_and_Authorization_with_AWS_Cognito.php
+* Resetting password https://stackoverflow.com/questions/38110615/how-to-allow-my-user-to-reset-their-password-on-cognito-user-pools
+
