@@ -81,8 +81,8 @@ function createValueCard (value, habits) {
     card.addEventListener('saw.valuecard-delete-habit-click', e => {
         onDeleteEntityClicked(e.detail.habit, 'habits')
     })
-    card.addEventListener('saw.valuecard-edit-value-click', () => {
-        onEditValueClicked(value)
+    card.addEventListener('saw.valuecard-edit-value-click', e => {
+        onEditValueClicked(value, e)
     })
 
     return card
@@ -94,7 +94,7 @@ function openModal (modal) {
 }
 
 function openAddValueModal () {
-    const modal = document.createElement('saw-upsert-habit-modal')
+    const modal = document.createElement('saw-upsert-value-modal')
     modal.addEventListener('saw.modal-submit', onAddValue)
     openModal(modal)
 }
@@ -103,7 +103,8 @@ function openEditValueModal (valueToEdit) {
     const modal = document.createElement('saw-upsert-value-modal')
     modal.setAttribute('prefill-name', valueToEdit.name)
     modal.setAttribute('prefill-description', valueToEdit.description)
-    modal.addEventListener('saw.modal-submit', e => onEditValue(valueToEdit))
+    modal.addEventListener('saw.modal-submit', e =>
+        onEditValue(valueToEdit, e.detail.input.name, e.detail.input.description))
     openModal(modal)
 }
 
@@ -122,20 +123,26 @@ function onAddValue (event) {
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
-function onEditValue (valueToUpdate, affectedHabits, submitEvent) {
-    valueToUpdate.name = submitEvent.detail.input.name
-    valueToUpdate.description = submitEvent.detail.input.description
+function onEditValue (valueToUpdate, newName, newDescription) {
+    const affectedHabits = data.habits.filter(habit =>
+        habit.values.includes(valueToUpdate.name) && valueToUpdate.name !== newName
+    )
+
+    const oldName = valueToUpdate.name
+
+    valueToUpdate.name = newName
+    valueToUpdate.description = newDescription
 
     affectedHabits.forEach(habit => {
-        const index = habit.values.indexOf(valueToUpdate.name)
+        const index = habit.values.indexOf(oldName)
 
         if (index !== -1) {
-            habit.values[index] = submitEvent.detail.input.name
+            habit.values[index] = newName
         }
     })
 
     updateHabitsDisplay(data.values, data.habits)
-    putS3JSON(s3, s3BucketName, jsonPath, data)
+    putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
 function onAddHabit (event) {

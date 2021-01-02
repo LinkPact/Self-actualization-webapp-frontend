@@ -46,7 +46,7 @@ class UpsertValueModal extends HTMLElement {
                         <textarea id="description-input"></textarea>
                     </label>
 
-                    <button>Add value</button>
+                    <button>Submit</button>
                 </form>
             </paper-dialog>
         `
