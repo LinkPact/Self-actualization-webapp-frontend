@@ -139,6 +139,7 @@ function onSubmitValue (event) {
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
+function addListeners () {
     document.getElementById('newHabitButton').addEventListener('click', () => {
         const nameInput = document.getElementById('habit_name_input')
         const valuesInput = document.getElementById('habit_values_input')
