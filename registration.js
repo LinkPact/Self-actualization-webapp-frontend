@@ -22,63 +22,72 @@ document
     .getElementById('register_button')
     .addEventListener('click',
         async function () {
-            await registerUser(
-                poolData,
-                cognitoUserObj,
-                document.getElementById('email').value,
-                document.getElementById('password').value
-            )
-            console.log('RegisterUser function done')
+
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+
+            if (email && password) {
+                await registerUser(
+                    poolData,
+                    cognitoUserObj,
+                    email,
+                    password
+                )
+                console.log('RegisterUser function done')
+            }
+            else {
+                alert('You need to enter both email and password to register a new user')
+            }
         })
 
 document
     .getElementById('verify_button')
     .addEventListener('click',
         async function () {
-            await logIn(
-                poolData,
-                cognitoUserObj,
-                document.getElementById('email').value,
-                document.getElementById('password').value
-            )
-            console.log('Logged in')
-            await verifyCode(
-                cognitoUserObj,
-                document.getElementById('verification').value
-            )
-            console.log('Verifycode function done')
+
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const verification = document.getElementById('verification').value
+
+            if (email && password && verification) {
+                await logIn(
+                    poolData,
+                    cognitoUserObj,
+                    email,
+                    password
+                )
+                console.log('Logged in prior to verification')
+                await verifyCode(
+                    cognitoUserObj,
+                    verification
+                )
+                console.log('Verifycode function done')
+            }
+            else {
+                alert('Email, password and verification code needs to be entered for verification')
+            }
         })
 
 document
     .getElementById('resend_button')
     .addEventListener('click',
         async function () {
-            // console.log('Resend verification')
-            // const params = {}
-            resendVerification(
-                poolData,
-                cognitoUserObj,
-                document.getElementById('email').value,
-                document.getElementById('password').value
-            )
-            // const output = await cognitoidentityserviceprovider.resendConfirmationCode(params, (err, data) => {
-            //     if (err) {
-            //         console.log(err, err.stack)
-            //     }
-            //     else {
-            //         console.log(data)
-            //     }
-            // })
-            // await logIn(
-            //     poolData,
-            //     cognitoUserObj,
-            //     document.getElementById('email').value,
-            //     document.getElementById('password').value
-            // )
-            // console.log('Logged in')
-            // await verifyCode(
-            //     cognitoUserObj,
-            //     document.getElementById('verification').value
-            // )
-            // console.log('Verifycode function done')
+
+            const email = document.getElementById('email').value
+            // const password = document.getElementById('password').value
+
+            if (email && password) {
+                await resendVerification(
+                    poolData,
+                    cognitoUserObj,
+                    email,
+                    (username) => {
+                        alert(`If there is an account for the email ${username} a verification message has been sent there`)
+                    }
+                    // password
+                )
+            }
+            else {
+                alert('Email needs to be present!')
+            }
         })
