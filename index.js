@@ -88,6 +88,9 @@ function createValueCard (value, habits) {
     card.addEventListener('saw.valuecard-edit-value-click', e => {
         onEditValueClicked(value, e)
     })
+    card.addEventListener('saw.valuecard-edit-habit-click', e => {
+        onEditHabitClicked(e.detail.habit)
+    })
 
     return card
 }
@@ -109,6 +112,16 @@ function openEditValueModal (valueToEdit) {
     modal.setAttribute('prefill-description', valueToEdit.description)
     modal.addEventListener('saw.modal-submit', e =>
         onEditValue(valueToEdit, e.detail.input.name, e.detail.input.description))
+    openModal(modal)
+}
+
+function openEditHabitModal (habitToEdit) {
+    const modal = document.createElement('saw-upsert-habit-modal')
+    modal.setAttribute('prefill-name', habitToEdit.name)
+    modal.values = data.values
+    modal.preselectValues = habitToEdit.values
+    modal.addEventListener('saw.modal-submit', e =>
+        onEditHabit(habitToEdit, e.detail.input.name, e.detail.input.values))
     openModal(modal)
 }
 
@@ -150,6 +163,14 @@ function onEditValue (valueToUpdate, newName, newDescription) {
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
+function onEditHabit (habitToEdit, newName, newValues) {
+    habitToEdit.name = newName
+    habitToEdit.values = newValues
+
+    updateHabitsDisplay(data.values, data.habits)
+    putS3JSON(s3, s3BucketName, jsonPath(), data)
+}
+
 function onAddHabit (event) {
     data.habits.push({
         name: event.detail.input.name,
@@ -163,13 +184,15 @@ function onEditValueClicked (value) {
     openEditValueModal(value)
 }
 
+function onEditHabitClicked (habit) {
+    openEditHabitModal(habit)
+}
+
 function onDeleteValueClicked (value) {
     removeIfPresent(data.values, value)
 
     putS3JSON(s3, s3BucketName, jsonPath(), data)
     updateHabitsDisplay(data.values, data.habits)
-
-    console.log(data)
 }
 
 function onDeleteHabitClicked (value, habit) {
@@ -183,8 +206,6 @@ function onDeleteHabitClicked (value, habit) {
 
     putS3JSON(s3, s3BucketName, jsonPath(), data)
     updateHabitsDisplay(data.values, data.habits)
-
-    console.log(data)
 }
 
 function removeIfPresent (arr, element) {

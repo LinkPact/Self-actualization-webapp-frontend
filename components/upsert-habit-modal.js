@@ -5,9 +5,12 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  *
  * Works the same as UpsertValueModal.
  *
+ * Properties:
+ * - values                 list of all values to populate select input with
+ * - preselectValues        values to preselect in select input
+ *
  * Attributes:
  * - prefill-name           text to prefill name input field with
- * - prefill-values         text to prefill values input field with
  *
  * Events: same as UpserValueModal
  */
@@ -41,15 +44,19 @@ class UpsertHabitModal extends HTMLElement {
                         </select>
                     </label>
 
-                    <button>Add value</button>
+                    <button>Submit</button>
                 </form>
             </paper-dialog>
         `
         this._values = []
+        this._preselectValues = []
     }
 
     get values () { return this._values }
     set values (values) { this._values = values }
+
+    get preselectValues () { return this._preselectValues }
+    set preselectValues (preselectValues) { this._preselectValues = preselectValues }
 
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
@@ -77,8 +84,9 @@ class UpsertHabitModal extends HTMLElement {
         dialog.addEventListener('iron-overlay-closed', () =>
             this.dispatchEvent(new CustomEvent('saw.modal-close')))
 
-        if (this._hasAPrefillAttribute()) {
-            this._addPrefills()
+        if (this.hasAttribute('prefill-name')) {
+            this.shadowRoot.querySelector('#title').innerHTML = 'Edit Habit'
+            this.shadowRoot.querySelector('#name-input').value = this.getAttribute('prefill-name')
         }
 
         this._populateDropdown()
@@ -86,30 +94,19 @@ class UpsertHabitModal extends HTMLElement {
         dialog.open()
     }
 
-    _hasAPrefillAttribute () {
-        return this.hasAttribute('prefill-name') || this.hasAttribute('prefill-values')
-    }
-
-    _addPrefills () {
-        this.shadowRoot.querySelector('#title').innerHTML = 'Edit Habit'
-
-        if (this.hasAttribute('prefill-name')) {
-            this.shadowRoot.querySelector('#name-input').value = this.getAttribute('prefill-name')
-        }
-
-        if (this.hasAttribute('prefill-values')) {
-            this.shadowRoot.querySelector('#values-input').value =
-                this.getAttribute('prefill-values')
-        }
-    }
-
     _populateDropdown () {
         const select = this.shadowRoot.querySelector('#values-input')
 
         this._values.forEach(value => {
             const option = document.createElement('option')
+
             option.setAttribute('value', value.name)
             option.innerHTML = value.name
+
+            if (this._preselectValues.includes(value.name)) {
+                option.selected = true
+            }
+
             select.appendChild(option)
         })
     }

@@ -87,12 +87,14 @@ class ValueCard extends HTMLElement {
 
     _createHabitListItem (habit) {
         const li = document.createElement('li')
-        const btn = document.createElement('button')
+        const delBtn = document.createElement('button')
+        const editBtn = document.createElement('button')
 
-        btn.innerHTML = 'x'
+        delBtn.innerHTML = 'x'
+        editBtn.innerHTML = 'e'
         li.innerHTML = habit.name
 
-        btn.addEventListener('click', e => {
+        delBtn.addEventListener('click', e => {
             e.preventDefault()
             this.dispatchEvent(new CustomEvent('saw.valuecard-delete-habit-click', {
                 detail: {
@@ -101,7 +103,17 @@ class ValueCard extends HTMLElement {
             }))
         })
 
-        li.appendChild(btn)
+        editBtn.addEventListener('click', e => {
+            e.preventDefault()
+            this.dispatchEvent(new CustomEvent('saw.valuecard-edit-habit-click', {
+                detail: {
+                    habit: habit
+                }
+            }))
+        })
+
+        li.appendChild(editBtn)
+        li.appendChild(delBtn)
 
         return li
     }
