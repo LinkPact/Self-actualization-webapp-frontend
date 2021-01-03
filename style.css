@@ -1,13 +1,7 @@
-paper-card {
-    display: block;
-}
-
-label {
-    display: block;
-}
-
-textarea {
-    display: block;
+#value-container {
+    display: grid;
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .floating-button-left {
