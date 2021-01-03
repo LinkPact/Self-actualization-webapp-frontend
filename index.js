@@ -113,20 +113,16 @@ function openModal (modal) {
     document.body.appendChild(modal)
 }
 
-function createValueModal () {
-    const modal = document.createElement('saw-upsert-value-modal')
-    modal.valueNames = data.values.map(val => val.name)
-    return modal
-}
-
 function openAddValueModal () {
-    const modal = createValueModal()
+    const modal = document.createElement('saw-upsert-value-modal')
     modal.addEventListener('saw.modal-submit', onAddValue)
     openModal(modal)
 }
 
 function openEditValueModal (valueToEdit) {
-    const modal = createValueModal()
+    const modal = document.createElement('saw-upsert-value-modal')
+    modal.conflictingValueNames =
+        data.values.filter(val => val !== valueToEdit).map(val => val.name)
     modal.setAttribute('prefill-name', valueToEdit.name)
     modal.setAttribute('prefill-description', valueToEdit.description)
     modal.addEventListener('saw.modal-submit', e =>
@@ -136,6 +132,8 @@ function openEditValueModal (valueToEdit) {
 
 function openEditHabitModal (habitToEdit) {
     const modal = document.createElement('saw-upsert-habit-modal')
+    modal.conflictingHabitNames =
+        data.habits.filter(habit => habit !== habitToEdit).map(habit => habit.name)
     modal.setAttribute('prefill-name', habitToEdit.name)
     modal.values = data.values
     modal.preselectValues = habitToEdit.values

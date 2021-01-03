@@ -8,6 +8,7 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  * Properties:
  * - values                 list of all values to populate select input with
  * - preselectValues        values to preselect in select input
+ * - conflictingHabitNames  list of names of other habits to check uniqueness of input against
  *
  * Attributes:
  * - prefill-name           text to prefill name input field with
@@ -50,6 +51,7 @@ class UpsertHabitModal extends HTMLElement {
         `
         this._values = []
         this._preselectValues = []
+        this._conflictingHabitNames = []
     }
 
     get values () { return this._values }
@@ -57,6 +59,9 @@ class UpsertHabitModal extends HTMLElement {
 
     get preselectValues () { return this._preselectValues }
     set preselectValues (preselectValues) { this._preselectValues = preselectValues }
+
+    get conflictingHabitNames () { return this._conflictingHabitNames }
+    set conflictingHabitNames (conflicts) { this._conflictingHabitNames = conflicts }
 
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
@@ -143,7 +148,7 @@ class UpsertHabitModal extends HTMLElement {
     }
 
     _validateInput () {
-        return !this._values.includes(this._getNameInputValue())
+        return !this._conflictingHabitNames.includes(this._getNameInputValue())
     }
 }
 

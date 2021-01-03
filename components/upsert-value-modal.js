@@ -10,7 +10,7 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  *   from the DOM when closed using the event 'saw.modal-close'.
  *
  * Properties:
- * - valueNames             names of all values. Needed to validate uniqueness of name input
+ * - conflictingValueNames  list of names of other values to check uniqueness of input against
  *
  * Attributes:
  * - prefill-name           text to prefill name input field with
@@ -53,11 +53,11 @@ class UpsertValueModal extends HTMLElement {
                 </form>
             </paper-dialog>
         `
-        this._valueNames = []
+        this._conflictingValueNames = []
     }
 
-    get valueNames () { return this._valueNames }
-    set valueNames (valueNames) { this._valueNames = valueNames }
+    get conflictingValueNames () { return this._conflictingValueNames }
+    set conflictingValueNames (conflicts) { this._conflictingValueNames = conflicts }
 
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
@@ -140,7 +140,7 @@ class UpsertValueModal extends HTMLElement {
     }
 
     _validateInput () {
-        return !this._valueNames.includes(this._getNameInputValue())
+        return !this._conflictingValueNames.includes(this._getNameInputValue())
     }
 }
 
