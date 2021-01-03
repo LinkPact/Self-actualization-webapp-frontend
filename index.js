@@ -135,10 +135,16 @@ function openEditHabitModal (habitToEdit) {
     modal.conflictingHabitNames =
         data.habits.filter(habit => habit !== habitToEdit).map(habit => habit.name)
     modal.setAttribute('prefill-name', habitToEdit.name)
+
+    if (habitToEdit.description) {
+        modal.setAttribute('prefill-description', habitToEdit.description)
+    }
+
     modal.values = data.values
     modal.preselectValues = habitToEdit.values
-    modal.addEventListener('saw.modal-submit', e =>
-        onEditHabit(habitToEdit, e.detail.input.name, e.detail.input.values))
+    modal.addEventListener('saw.modal-submit', e => onEditHabit(
+        habitToEdit, e.detail.input.name, e.detail.input.description, e.detail.input.values
+    ))
     openModal(modal)
 }
 
@@ -180,8 +186,9 @@ function onEditValue (valueToUpdate, newName, newDescription) {
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
-function onEditHabit (habitToEdit, newName, newValues) {
+function onEditHabit (habitToEdit, newName, newDescription, newValues) {
     habitToEdit.name = newName
+    habitToEdit.description = newDescription
     habitToEdit.values = newValues
 
     updateHabitsDisplay(data.values, data.habits)
@@ -191,6 +198,7 @@ function onEditHabit (habitToEdit, newName, newValues) {
 function onAddHabit (event) {
     data.habits.push({
         name: event.detail.input.name,
+        description: event.detail.input.description,
         values: event.detail.input.values
     })
     updateHabitsDisplay(data.values, data.habits)

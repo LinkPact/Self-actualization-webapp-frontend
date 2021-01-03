@@ -106,9 +106,11 @@ class ValueCard extends HTMLElement {
 
     _createHabitListItem (habit) {
         const li = document.createElement('li')
+        const desc = document.createElement('em')
         const delBtn = document.createElement('button')
         const editBtn = document.createElement('button')
 
+        desc.innerHTML = habit.description ? `, ${habit.description}` : ''
         delBtn.innerHTML = 'x'
         editBtn.innerHTML = 'e'
         li.innerHTML = habit.name
@@ -131,6 +133,7 @@ class ValueCard extends HTMLElement {
             }))
         })
 
+        li.append(desc)
         li.appendChild(editBtn)
         li.appendChild(delBtn)
 

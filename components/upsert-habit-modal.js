@@ -12,6 +12,7 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  *
  * Attributes:
  * - prefill-name           text to prefill name input field with
+ * - prefill-description    text to prefill description input with
  *
  * Events: same as UpserValueModal
  */
@@ -22,6 +23,10 @@ class UpsertHabitModal extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 label {
+                    display: block;
+                }
+
+                textarea {
                     display: block;
                 }
 
@@ -36,6 +41,11 @@ class UpsertHabitModal extends HTMLElement {
 
                     <label for="name-input">
                         Name: <input type="text" id="name-input" required />
+                    </label>
+
+                    <label for="description-input">
+                        Description:
+                        <textarea id="description-input"></textarea>
                     </label>
 
                     <label for="values-input">
@@ -81,6 +91,7 @@ class UpsertHabitModal extends HTMLElement {
                     detail: {
                         input: {
                             name: this._getNameInputValue(),
+                            description: this._getDescriptionInputValue(),
                             values: this._getSelectedValues()
                         }
                     }
@@ -95,9 +106,9 @@ class UpsertHabitModal extends HTMLElement {
         dialog.addEventListener('iron-overlay-closed', () =>
             this.dispatchEvent(new CustomEvent('saw.modal-close')))
 
-        if (this.hasAttribute('prefill-name')) {
+        if (this._hasAnyPrefillAttribute()) {
             this.shadowRoot.querySelector('#title').innerHTML = 'Edit Habit'
-            this.shadowRoot.querySelector('#name-input').value = this.getAttribute('prefill-name')
+            this._prefillFields()
         }
 
         this._populateDropdown()
@@ -121,6 +132,21 @@ class UpsertHabitModal extends HTMLElement {
         })
     }
 
+    _hasAnyPrefillAttribute () {
+        return this.hasAttribute('prefill-name') || this.hasAttribute('prefill-description')
+    }
+
+    _prefillFields () {
+        if (this.hasAttribute('prefill-name')) {
+            this.shadowRoot.querySelector('#name-input').value = this.getAttribute('prefill-name')
+        }
+
+        if (this.hasAttribute('prefill-description')) {
+            this.shadowRoot.querySelector('#description-input').value =
+                this.getAttribute('prefill-description')
+        }
+    }
+
     _populateDropdown () {
         const select = this.shadowRoot.querySelector('#values-input')
 
@@ -140,6 +166,10 @@ class UpsertHabitModal extends HTMLElement {
 
     _getNameInputValue () {
         return this.shadowRoot.querySelector('#name-input').value.trim()
+    }
+
+    _getDescriptionInputValue () {
+        return this.shadowRoot.querySelector('#description-input').value.trim()
     }
 
     _getSelectedValues () {
