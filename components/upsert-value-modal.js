@@ -9,6 +9,9 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  * - Is opened as soon as it is connected to the DOM and should for most use-cases be removed
  *   from the DOM when closed using the event 'saw.modal-close'.
  *
+ * Properties:
+ * - valueNames             names of all values. Needed to validate uniqueness of name input
+ *
  * Attributes:
  * - prefill-name           text to prefill name input field with
  * - prefill-description    text to prefill description input field with
@@ -38,7 +41,7 @@ class UpsertValueModal extends HTMLElement {
                     <h3 id="title">Add Value</h3>
 
                     <label for="name-input">
-                        Name: <input type="text" id="name-input" />
+                        Name: <input type="text" id="name-input" required />
                     </label>
 
                     <label for="description-input">
@@ -50,10 +53,16 @@ class UpsertValueModal extends HTMLElement {
                 </form>
             </paper-dialog>
         `
+        this._valueNames = []
     }
+
+    get valueNames () { return this._valueNames }
+    set valueNames (valueNames) { this._valueNames = valueNames }
 
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
+
+        this._setupCustomValidationMessage()
 
         this.shadowRoot.querySelector('form').addEventListener('submit', (event) => {
             /*
@@ -63,16 +72,20 @@ class UpsertValueModal extends HTMLElement {
              */
             event.preventDefault()
 
-            this.dispatchEvent(new CustomEvent('saw.modal-submit', {
-                detail: {
-                    input: {
-                        name: this.shadowRoot.querySelector('#name-input').value,
-                        description: this.shadowRoot.querySelector('#description-input').value
+            if (this._validateInput()) {
+                this.dispatchEvent(new CustomEvent('saw.modal-submit', {
+                    detail: {
+                        input: {
+                            name: this._getNameInputValue(),
+                            description: this._getDescriptionInputValue()
+                        }
                     }
-                }
-            }))
+                }))
 
-            dialog.close()
+                dialog.close()
+            } else {
+                this.shadowRoot.querySelector('#name-input').reportValidity()
+            }
         })
 
         dialog.addEventListener('iron-overlay-closed', () =>
@@ -83,6 +96,22 @@ class UpsertValueModal extends HTMLElement {
         }
 
         dialog.open()
+    }
+
+    _setupCustomValidationMessage () {
+        const nameInput = this.shadowRoot.querySelector('#name-input')
+
+        /*
+         * Use onchange since a custom validation message must be sent before the submit event
+         * occurs.
+         */
+        nameInput.addEventListener('change', e => {
+            if (this._validateInput()) {
+                nameInput.setCustomValidity('')
+            } else {
+                nameInput.setCustomValidity('Name must be unique.')
+            }
+        })
     }
 
     _hasAPrefillAttribute () {
@@ -100,6 +129,18 @@ class UpsertValueModal extends HTMLElement {
             this.shadowRoot.querySelector('#description-input').value =
                 this.getAttribute('prefill-description')
         }
+    }
+
+    _getNameInputValue () {
+        return this.shadowRoot.querySelector('#name-input').value.trim()
+    }
+
+    _getDescriptionInputValue () {
+        return this.shadowRoot.querySelector('#description-input').value.trim()
+    }
+
+    _validateInput () {
+        return !this._valueNames.includes(this._getNameInputValue())
     }
 }
 

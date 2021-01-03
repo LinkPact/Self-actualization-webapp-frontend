@@ -34,12 +34,12 @@ class UpsertHabitModal extends HTMLElement {
                     <h3 id="title">Add Habit</h3>
 
                     <label for="name-input">
-                        Name: <input type="text" id="name-input" />
+                        Name: <input type="text" id="name-input" required />
                     </label>
 
                     <label for="values-input">
                         Values:
-                        <select id="values-input" multiple>
+                        <select id="values-input" multiple required>
                             <option value="">--Select one or more values--</option>
                         </select>
                     </label>
@@ -61,6 +61,8 @@ class UpsertHabitModal extends HTMLElement {
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
 
+        this._setupCustomValidationMessage()
+
         this.shadowRoot.querySelector('form').addEventListener('submit', (event) => {
             /*
              * By default, a submitted form has action="self" which means that the page will be
@@ -69,16 +71,25 @@ class UpsertHabitModal extends HTMLElement {
              */
             event.preventDefault()
 
-            this.dispatchEvent(new CustomEvent('saw.modal-submit', {
-                detail: {
-                    input: {
-                        name: this.shadowRoot.querySelector('#name-input').value,
-                        values: this._getSelectedValues()
-                    }
-                }
-            }))
+            /*
+             * Reset custom validity if an validation error in case a validation error was shown
+             * previously.
+             */
 
-            dialog.close()
+            if (this._validateInput()) {
+                this.dispatchEvent(new CustomEvent('saw.modal-submit', {
+                    detail: {
+                        input: {
+                            name: this._getNameInputValue(),
+                            values: this._getSelectedValues()
+                        }
+                    }
+                }))
+
+                dialog.close()
+            } else {
+                this.shadowRoot.querySelector('#name-input').reportValidity()
+            }
         })
 
         dialog.addEventListener('iron-overlay-closed', () =>
@@ -92,6 +103,22 @@ class UpsertHabitModal extends HTMLElement {
         this._populateDropdown()
 
         dialog.open()
+    }
+
+    _setupCustomValidationMessage () {
+        const nameInput = this.shadowRoot.querySelector('#name-input')
+
+        /*
+         * Use onchange since a custom validation message must be sent before the submit event
+         * occurs.
+         */
+        nameInput.addEventListener('change', e => {
+            if (this._validateInput()) {
+                nameInput.setCustomValidity('')
+            } else {
+                nameInput.setCustomValidity('Name must be unique.')
+            }
+        })
     }
 
     _populateDropdown () {
@@ -111,9 +138,17 @@ class UpsertHabitModal extends HTMLElement {
         })
     }
 
+    _getNameInputValue () {
+        return this.shadowRoot.querySelector('#name-input').value.trim()
+    }
+
     _getSelectedValues () {
         return Array.from(this.shadowRoot.querySelector('#values-input').querySelectorAll('option'))
             .filter(option => option.selected).map(option => option.value)
+    }
+
+    _validateInput () {
+        return !this._values.includes(this._getNameInputValue())
     }
 }
 

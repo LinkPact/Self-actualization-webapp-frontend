@@ -114,14 +114,20 @@ function openModal (modal) {
     document.body.appendChild(modal)
 }
 
-function openAddValueModal () {
+function createValueModal () {
     const modal = document.createElement('saw-upsert-value-modal')
+    modal.valueNames = data.values.map(val => val.name)
+    return modal
+}
+
+function openAddValueModal () {
+    const modal = createValueModal()
     modal.addEventListener('saw.modal-submit', onAddValue)
     openModal(modal)
 }
 
 function openEditValueModal (valueToEdit) {
-    const modal = document.createElement('saw-upsert-value-modal')
+    const modal = createValueModal()
     modal.setAttribute('prefill-name', valueToEdit.name)
     modal.setAttribute('prefill-description', valueToEdit.description)
     modal.addEventListener('saw.modal-submit', e =>
