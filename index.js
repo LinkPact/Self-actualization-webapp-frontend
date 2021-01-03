@@ -34,7 +34,12 @@ const poolData = {
 const s3 = new AWS.S3()
 
 function jsonPath () {
-    return cognitoUserObj.getUsername()
+    if (cognitoUserObj.user) {
+        return cognitoUserObj.getUsername()
+    }
+    else {
+        'default.json'
+    }
 }
 
 async function loadFromDatabase (s3BucketName) {
