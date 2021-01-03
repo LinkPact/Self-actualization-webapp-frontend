@@ -97,6 +97,14 @@ function createValueCard (value, habits) {
     card.addEventListener('saw.valuecard-edit-habit-click', e => {
         onEditHabitClicked(e.detail.habit)
     })
+    card.addEventListener('valuecard-move-up-click', e => {
+        console.log('move up value clicked')
+        onMoveValueClicked(value, 'up')
+    })
+    card.addEventListener('valuecard-move-down-click', e => {
+        console.log('move down value clicked')
+        onMoveValueClicked(value, 'down')
+    })
 
     return card
 }
@@ -192,6 +200,34 @@ function onEditValueClicked (value) {
 
 function onEditHabitClicked (habit) {
     openEditHabitModal(habit)
+}
+
+function onMoveValueClicked(value, direction) {
+
+    const valueName = value.name
+    const valueIndex = data.values.map(value => value.name).indexOf(value.name)
+    let targetIndex = -1;
+    if (direction === 'up') {
+        if (valueIndex > 0) {
+            targetIndex = valueIndex - 1
+        }
+    }
+    else if (direction === 'down') {
+        if (valueIndex < data.values.length - 1) {
+            targetIndex = valueIndex + 1
+        }
+    }
+    else {
+        throw new Error(`Unknown direction encountered: ${direction}, expected "up" or "down"`)
+    }
+
+    if (targetIndex !== -1) {
+        // Swap places
+        [data.values[valueIndex], data.values[targetIndex]] = [data.values[targetIndex], data.values[valueIndex]]
+        putS3JSON(s3, s3BucketName, jsonPath(), data)
+        updateHabitsDisplay(data.values, data.habits)
+    }
+
 }
 
 function onDeleteValueClicked (value) {

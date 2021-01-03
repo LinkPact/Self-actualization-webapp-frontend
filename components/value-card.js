@@ -33,6 +33,9 @@ class ValueCard extends HTMLElement {
 
                     <button id='delete-value-button'>Delete value</button>
                     <button id='edit-value-button'>Edit value</button>
+                    
+                    <button id='move-up-button'>Move up</button>
+                    <button id='move-down-button'>Move down</button>
 
                     <ul id='habit-list'></ul>
                 </div>
@@ -74,6 +77,22 @@ class ValueCard extends HTMLElement {
                 }
             }
             ))
+        })
+
+        this.shadowRoot.querySelector('#move-up-button').addEventListener('click', e => {
+            this.dispatchEvent(new CustomEvent('valuecard-move-up-click', {
+                detail: {
+                    value: this._value
+                }
+            }))
+        })
+
+        this.shadowRoot.querySelector('#move-down-button').addEventListener('click', e => {
+            this.dispatchEvent(new CustomEvent('valuecard-move-down-click', {
+                detail: {
+                    value: this._value
+                }
+            }))
         })
 
         this.update()
