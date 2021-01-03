@@ -3,6 +3,7 @@ import { logIn, logOut, UserObject } from './modules/login.js'
 import './components/upsert-value-modal.js'
 import './components/upsert-habit-modal.js'
 import './components/value-card.js'
+import { downloadObjectAsJson }  from './modules/file_utils.js'
 
 const s3BucketName = 'selfactualizationtest'
 
@@ -255,6 +256,10 @@ function addListeners () {
 
     document.getElementById('open_add_habit_modal_button').addEventListener('click', () => {
         openAddHabitModal()
+    })
+
+    document.getElementById('download_json').addEventListener('click', () => {
+        downloadObjectAsJson(data, 'backup')
     })
 }
 
