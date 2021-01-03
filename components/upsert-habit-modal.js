@@ -71,11 +71,6 @@ class UpsertHabitModal extends HTMLElement {
              */
             event.preventDefault()
 
-            /*
-             * Reset custom validity if an validation error in case a validation error was shown
-             * previously.
-             */
-
             if (this._validateInput()) {
                 this.dispatchEvent(new CustomEvent('saw.modal-submit', {
                     detail: {
