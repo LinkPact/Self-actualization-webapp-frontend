@@ -37,9 +37,8 @@ const s3 = new AWS.S3()
 function jsonPath () {
     if (cognitoUserObj.user) {
         return cognitoUserObj.getUsername()
-    }
-    else {
-        'default.json'
+    } else {
+        return 'default.json'
     }
 }
 
