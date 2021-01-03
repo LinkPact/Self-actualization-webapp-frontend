@@ -34,12 +34,12 @@ class UpsertHabitModal extends HTMLElement {
                     <h3 id="title">Add Habit</h3>
 
                     <label for="name-input">
-                        Name: <input type="text" id="name-input" />
+                        Name: <input type="text" id="name-input" required />
                     </label>
 
                     <label for="values-input">
                         Values:
-                        <select id="values-input" multiple>
+                        <select id="values-input" multiple required>
                             <option value="">--Select one or more values--</option>
                         </select>
                     </label>
@@ -69,16 +69,18 @@ class UpsertHabitModal extends HTMLElement {
              */
             event.preventDefault()
 
-            this.dispatchEvent(new CustomEvent('saw.modal-submit', {
-                detail: {
-                    input: {
-                        name: this.shadowRoot.querySelector('#name-input').value,
-                        values: this._getSelectedValues()
+            if (this._validateInput()) {
+                this.dispatchEvent(new CustomEvent('saw.modal-submit', {
+                    detail: {
+                        input: {
+                            name: this.shadowRoot.querySelector('#name-input').value,
+                            values: this._getSelectedValues()
+                        }
                     }
-                }
-            }))
+                }))
 
-            dialog.close()
+                dialog.close()
+            }
         })
 
         dialog.addEventListener('iron-overlay-closed', () =>
@@ -114,6 +116,11 @@ class UpsertHabitModal extends HTMLElement {
     _getSelectedValues () {
         return Array.from(this.shadowRoot.querySelector('#values-input').querySelectorAll('option'))
             .filter(option => option.selected).map(option => option.value)
+    }
+
+    _validateInput () {
+        // TODO: Validate that value name is unique
+        return true
     }
 }
 

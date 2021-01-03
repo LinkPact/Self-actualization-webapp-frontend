@@ -38,7 +38,7 @@ class UpsertValueModal extends HTMLElement {
                     <h3 id="title">Add Value</h3>
 
                     <label for="name-input">
-                        Name: <input type="text" id="name-input" />
+                        Name: <input type="text" id="name-input" required />
                     </label>
 
                     <label for="description-input">
@@ -63,16 +63,18 @@ class UpsertValueModal extends HTMLElement {
              */
             event.preventDefault()
 
-            this.dispatchEvent(new CustomEvent('saw.modal-submit', {
-                detail: {
-                    input: {
-                        name: this.shadowRoot.querySelector('#name-input').value,
-                        description: this.shadowRoot.querySelector('#description-input').value
+            if (this._validateInput()) {
+                this.dispatchEvent(new CustomEvent('saw.modal-submit', {
+                    detail: {
+                        input: {
+                            name: this.shadowRoot.querySelector('#name-input').value,
+                            description: this.shadowRoot.querySelector('#description-input').value
+                        }
                     }
-                }
-            }))
+                }))
 
-            dialog.close()
+                dialog.close()
+            }
         })
 
         dialog.addEventListener('iron-overlay-closed', () =>
@@ -100,6 +102,11 @@ class UpsertValueModal extends HTMLElement {
             this.shadowRoot.querySelector('#description-input').value =
                 this.getAttribute('prefill-description')
         }
+    }
+
+    _validateInput () {
+        // TODO: Validate that habit name is unique
+        return true
     }
 }
 
