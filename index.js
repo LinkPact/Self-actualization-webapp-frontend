@@ -114,6 +114,7 @@ function openEditValueModal (valueToEdit) {
 
 function openAddHabitModal () {
     const modal = document.createElement('saw-upsert-habit-modal')
+    modal.values = data.values
     modal.addEventListener('saw.modal-submit', onAddHabit)
     openModal(modal)
 }

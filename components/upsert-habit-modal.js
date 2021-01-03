@@ -21,7 +21,7 @@ class UpsertHabitModal extends HTMLElement {
                     display: block;
                 }
 
-                textarea {
+                select {
                     display: block;
                 }
             </style>
@@ -34,15 +34,22 @@ class UpsertHabitModal extends HTMLElement {
                         Name: <input type="text" id="name-input" />
                     </label>
 
-                    <label for="habit-values-input">
-                        Values: <input type="text" id="values-input" />
+                    <label for="values-input">
+                        Values:
+                        <select id="values-input" multiple>
+                            <option value="">--Select one or more values--</option>
+                        </select>
                     </label>
 
                     <button>Add value</button>
                 </form>
             </paper-dialog>
         `
+        this._values = []
     }
+
+    get values () { return this._values }
+    set values (values) { this._values = values }
 
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
@@ -59,8 +66,7 @@ class UpsertHabitModal extends HTMLElement {
                 detail: {
                     input: {
                         name: this.shadowRoot.querySelector('#name-input').value,
-                        values: this.shadowRoot.querySelector('#values-input').value
-                            .split(',').map(str => str.trim())
+                        values: this._getSelectedValues()
                     }
                 }
             }))
@@ -74,6 +80,8 @@ class UpsertHabitModal extends HTMLElement {
         if (this._hasAPrefillAttribute()) {
             this._addPrefills()
         }
+
+        this._populateDropdown()
 
         dialog.open()
     }
@@ -93,6 +101,22 @@ class UpsertHabitModal extends HTMLElement {
             this.shadowRoot.querySelector('#values-input').value =
                 this.getAttribute('prefill-values')
         }
+    }
+
+    _populateDropdown () {
+        const select = this.shadowRoot.querySelector('#values-input')
+
+        this._values.forEach(value => {
+            const option = document.createElement('option')
+            option.setAttribute('value', value.name)
+            option.innerHTML = value.name
+            select.appendChild(option)
+        })
+    }
+
+    _getSelectedValues () {
+        return Array.from(this.shadowRoot.querySelector('#values-input').querySelectorAll('option'))
+            .filter(option => option.selected).map(option => option.value)
     }
 }
 
