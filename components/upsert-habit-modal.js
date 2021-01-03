@@ -61,6 +61,8 @@ class UpsertHabitModal extends HTMLElement {
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
 
+        this._setupCustomValidationMessage()
+
         this.shadowRoot.querySelector('form').addEventListener('submit', (event) => {
             /*
              * By default, a submitted form has action="self" which means that the page will be
@@ -69,17 +71,24 @@ class UpsertHabitModal extends HTMLElement {
              */
             event.preventDefault()
 
+            /*
+             * Reset custom validity if an validation error in case a validation error was shown
+             * previously.
+             */
+
             if (this._validateInput()) {
                 this.dispatchEvent(new CustomEvent('saw.modal-submit', {
                     detail: {
                         input: {
-                            name: this.shadowRoot.querySelector('#name-input').value,
+                            name: this._getNameInputValue(),
                             values: this._getSelectedValues()
                         }
                     }
                 }))
 
                 dialog.close()
+            } else {
+                this.shadowRoot.querySelector('#name-input').reportValidity()
             }
         })
 
@@ -94,6 +103,22 @@ class UpsertHabitModal extends HTMLElement {
         this._populateDropdown()
 
         dialog.open()
+    }
+
+    _setupCustomValidationMessage () {
+        const nameInput = this.shadowRoot.querySelector('#name-input')
+
+        /*
+         * Use onchange since a custom validation message must be sent before the submit event
+         * occurs.
+         */
+        nameInput.addEventListener('change', e => {
+            if (this._validateInput()) {
+                nameInput.setCustomValidity('')
+            } else {
+                nameInput.setCustomValidity('Name must be unique.')
+            }
+        })
     }
 
     _populateDropdown () {
@@ -113,14 +138,17 @@ class UpsertHabitModal extends HTMLElement {
         })
     }
 
+    _getNameInputValue () {
+        return this.shadowRoot.querySelector('#name-input').value.trim()
+    }
+
     _getSelectedValues () {
         return Array.from(this.shadowRoot.querySelector('#values-input').querySelectorAll('option'))
             .filter(option => option.selected).map(option => option.value)
     }
 
     _validateInput () {
-        // TODO: Validate that value name is unique
-        return true
+        return !this._values.includes(this._getNameInputValue())
     }
 }
 
