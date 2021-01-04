@@ -1,7 +1,13 @@
 #value-container {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+#value-container {
     display: grid;
     grid-auto-rows: 1fr;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .floating-button-left {
