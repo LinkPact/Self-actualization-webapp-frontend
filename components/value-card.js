@@ -23,6 +23,7 @@ class ValueCard extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 paper-card {
+                    width: 100%;
                     height: 100%;
                 }
             </style>
