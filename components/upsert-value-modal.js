@@ -27,12 +27,24 @@ class UpsertValueModal extends HTMLElement {
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.innerHTML = `
             <style>
+                #dialog {
+                    width: 40%;
+                }
+
+                form {
+                    margin-left: auto;
+                    margin-right: auto;
+                    width: 80%;
+                }
+
                 label {
                     display: block;
                 }
 
                 textarea {
                     display: block;
+                    width: 90%;
+                    height: 10em;
                 }
             </style>
 
