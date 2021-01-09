@@ -9,7 +9,8 @@ __Work in progress:__ More fields will be added as needed.
         ...
         {
             "name": string,
-            "description": string
+            "description": string,
+            "note": string
         }
         ...
     ],
