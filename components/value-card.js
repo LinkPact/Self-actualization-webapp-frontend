@@ -31,6 +31,7 @@ class ValueCard extends HTMLElement {
             <paper-card id='card' heading='test'>
                 <div class='card-content'>
                     <p id='description'></p>
+                    <p id='note'></p>
 
                     <button id='delete-value-button'>Delete value</button>
                     <button id='edit-value-button'>Edit value</button>
@@ -45,7 +46,7 @@ class ValueCard extends HTMLElement {
         this._value = {
             name: '',
             description: '',
-            values: []
+            note: ''
         }
         this._habits = []
     }
@@ -59,6 +60,10 @@ class ValueCard extends HTMLElement {
     connectedCallback () {
         this.shadowRoot.querySelector('#card').heading = this._value.name
         this.shadowRoot.querySelector('#description').innerHTML = this._value.description
+
+        if (this._value.note) {
+            this.shadowRoot.querySelector('#note').innerHTML = this._value.note
+        }
 
         this.shadowRoot.querySelector('#delete-value-button').addEventListener('click', e =>
             this.dispatchEvent(new CustomEvent('saw.valuecard-delete-value-click', {

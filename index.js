@@ -125,8 +125,19 @@ function openEditValueModal (valueToEdit) {
         data.values.filter(val => val !== valueToEdit).map(val => val.name)
     modal.setAttribute('prefill-name', valueToEdit.name)
     modal.setAttribute('prefill-description', valueToEdit.description)
+
+    if (valueToEdit.note) {
+        modal.setAttribute('prefill-note', valueToEdit.note)
+    }
+
     modal.addEventListener('saw.modal-submit', e =>
-        onEditValue(valueToEdit, e.detail.input.name, e.detail.input.description))
+        onEditValue(
+            valueToEdit,
+            e.detail.input.name,
+            e.detail.input.description,
+            e.detail.input.note
+        )
+    )
     openModal(modal)
 }
 
@@ -158,13 +169,15 @@ function openAddHabitModal () {
 function onAddValue (event) {
     data.values.push({
         name: event.detail.input.name,
-        description: event.detail.input.description
+        description: event.detail.input.description,
+        note: event.detail.input.note
     })
     updateHabitsDisplay(data.values, data.habits)
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
-function onEditValue (valueToUpdate, newName, newDescription) {
+// TODO: Pass event instead of individual fields
+function onEditValue (valueToUpdate, newName, newDescription, newNote) {
     const affectedHabits = data.habits.filter(habit =>
         habit.values.includes(valueToUpdate.name) && valueToUpdate.name !== newName
     )
@@ -173,6 +186,7 @@ function onEditValue (valueToUpdate, newName, newDescription) {
 
     valueToUpdate.name = newName
     valueToUpdate.description = newDescription
+    valueToUpdate.note = newNote
 
     affectedHabits.forEach(habit => {
         const index = habit.values.indexOf(oldName)
