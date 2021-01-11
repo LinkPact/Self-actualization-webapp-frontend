@@ -13,8 +13,7 @@ import 'https://unpkg.com/@polymer/paper-card/paper-card.js?module'
  *
  * Events:
  * - saw.valuecard-delete-value-click   dispatched when the user clicks on the delete value button
- * - saw.valuecard-delete-habit-click   dispatched when the user clicks on the delete habit button
- * - saw.valuecard-edit-value-click     dispatched when the user clicks on the edit habit button
+ * - saw.valuecard-habit-click          dispatched when the user clicks on a habit
  */
 class ValueCard extends HTMLElement {
     constructor () {
@@ -107,36 +106,15 @@ class ValueCard extends HTMLElement {
 
     _createHabitListItem (habit) {
         const li = document.createElement('li')
-        const desc = document.createElement('em')
-        const delBtn = document.createElement('button')
-        const editBtn = document.createElement('button')
 
-        desc.innerHTML = habit.description ? `, ${habit.description}` : ''
-        delBtn.innerHTML = 'x'
-        editBtn.innerHTML = 'e'
         li.innerHTML = habit.name
-
-        delBtn.addEventListener('click', e => {
-            e.preventDefault()
-            this.dispatchEvent(new CustomEvent('saw.valuecard-delete-habit-click', {
+        li.addEventListener('click', e => {
+            this.dispatchEvent(new CustomEvent('saw.valuecard-habit-click', {
                 detail: {
                     habit: habit
                 }
             }))
         })
-
-        editBtn.addEventListener('click', e => {
-            e.preventDefault()
-            this.dispatchEvent(new CustomEvent('saw.valuecard-edit-habit-click', {
-                detail: {
-                    habit: habit
-                }
-            }))
-        })
-
-        li.append(desc)
-        li.appendChild(editBtn)
-        li.appendChild(delBtn)
 
         return li
     }

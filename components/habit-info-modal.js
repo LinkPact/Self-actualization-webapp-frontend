@@ -2,6 +2,7 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
 /*
  * Events:
+ * - saw.modal-close                    dispatched when the modal is closed
  * - saw.valuecard-delete-habit-click   dispatched when the user clicks on the delete habit button
  * - saw.valuecard-edit-value-click     dispatched when the user clicks on the edit habit button
  */
@@ -28,28 +29,30 @@ class HabitInfoModal extends HTMLElement {
 
         this._habit = {
             name: '',
-            description: ''
+            description: '',
+            values: []
         }
-        this._connectedValues = []
     }
 
     get habit () { return this._habit }
     set habit (habit) { this._habit = habit }
-
-    get connectedValues () { return this._connectedValues }
-    set connectedValues (connectedValues) { this._connectedValues = connectedValues }
 
     connectedCallback () {
         const dialog = this.shadowRoot.querySelector('#dialog')
         const deleteButton = this.shadowRoot.querySelector('#delete_button')
         const editButton = this.shadowRoot.querySelector('#edit_button')
 
+        this.shadowRoot.querySelector('#title').innerHTML = this._habit.name
+
         if (this._habit.description) {
             this.shadowRoot.querySelector('#description').innerHTML = this._habit.description
         }
 
+        this._habit.values.forEach(v =>
+            this.shadowRoot.querySelector('#values').appendChild(this._createValueListItem(v))
+        )
+
         deleteButton.addEventListener('click', e => {
-            e.preventDefault()
             this.dispatchEvent(new CustomEvent('saw.habitinfomodal-delete-click', {
                 detail: {
                     habit: this._habit
@@ -58,7 +61,6 @@ class HabitInfoModal extends HTMLElement {
         })
 
         editButton.addEventListener('click', e => {
-            e.preventDefault()
             this.dispatchEvent(new CustomEvent('saw.habitinfomodal-edit-click', {
                 detail: {
                     habit: this._habit
@@ -66,7 +68,16 @@ class HabitInfoModal extends HTMLElement {
             }))
         })
 
+        dialog.addEventListener('iron-overlay-closed', () =>
+            this.dispatchEvent(new CustomEvent('saw.modal-close')))
+
         dialog.open()
+    }
+
+    _createValueListItem (value) {
+        const li = document.createElement('li')
+        li.innerHTML = value
+        return li
     }
 }
 
