@@ -93,7 +93,7 @@ function createValueCard (value, habits) {
     })
     card.addEventListener('saw.valuecard-habit-click', e => {
         console.log('habit clicked')
-        onHabitClicked(e)
+        onHabitClicked(value, e)
     })
     card.addEventListener('valuecard-move-up-click', e => {
         console.log('move up value clicked')
@@ -154,14 +154,15 @@ function openAddHabitModal () {
     openModal(modal)
 }
 
-function openHabitInfoModal (habit) {
+function openHabitInfoModal (value, habit) {
     const modal = document.createElement('saw-habit-info-modal')
     modal.habit = habit
     modal.addEventListener('saw.habitinfomodal-edit-click', e => {
         onEditHabitClicked(habit)
     })
     modal.addEventListener('saw.habitinfomodal-delete-click', e => {
-        onDeleteHabitClicked(habit)
+        onDeleteHabitClicked(value, habit)
+        modal.close()
     })
     openModal(modal)
 }
@@ -255,8 +256,8 @@ function onDeleteValueClicked (value) {
     updateHabitsDisplay(data.values, data.habits)
 }
 
-function onHabitClicked (event) {
-    openHabitInfoModal(event.detail.habit)
+function onHabitClicked (value, event) {
+    openHabitInfoModal(value, event.detail.habit)
 }
 
 function onDeleteHabitClicked (value, habit) {

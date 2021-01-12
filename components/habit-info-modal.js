@@ -32,13 +32,17 @@ class HabitInfoModal extends HTMLElement {
             description: '',
             values: []
         }
+        this._dialog = this.shadowRoot.querySelector('#dialog')
     }
 
     get habit () { return this._habit }
     set habit (habit) { this._habit = habit }
 
+    close () {
+        this._dialog.close()
+    }
+
     connectedCallback () {
-        const dialog = this.shadowRoot.querySelector('#dialog')
         const deleteButton = this.shadowRoot.querySelector('#delete_button')
         const editButton = this.shadowRoot.querySelector('#edit_button')
 
@@ -68,10 +72,10 @@ class HabitInfoModal extends HTMLElement {
             }))
         })
 
-        dialog.addEventListener('iron-overlay-closed', () =>
+        this._dialog.addEventListener('iron-overlay-closed', () =>
             this.dispatchEvent(new CustomEvent('saw.modal-close')))
 
-        dialog.open()
+        this._dialog.open()
     }
 
     _createValueListItem (value) {
