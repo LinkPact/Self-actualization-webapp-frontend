@@ -25,6 +25,11 @@ class ValueCard extends HTMLElement {
                     width: 100%;
                     height: 100%;
                 }
+
+                #habit-list li:hover {
+                    cursor: pointer;
+                    background-color: lightgray;
+                }
             </style>
 
             <paper-card id='card' heading='test'>
