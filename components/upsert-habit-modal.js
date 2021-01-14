@@ -13,6 +13,7 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
  * Attributes:
  * - prefill-name           text to prefill name input field with
  * - prefill-description    text to prefill description input with
+ * - prefill-note           text to prefill note input with
  *
  * Events: same as UpserValueModal
  */
@@ -60,6 +61,11 @@ class UpsertHabitModal extends HTMLElement {
                         <textarea id="description-input"></textarea>
                     </label>
 
+                    <label for="note-input">
+                        Note:
+                        <textarea id="note-input"></textarea>
+                    </label>
+
                     <label for="values-input">
                         Values:
                         <select id="values-input" multiple required>
@@ -104,6 +110,7 @@ class UpsertHabitModal extends HTMLElement {
                         input: {
                             name: this._getNameInputValue(),
                             description: this._getDescriptionInputValue(),
+                            note: this._getNoteInputValue(),
                             values: this._getSelectedValues()
                         }
                     }
@@ -145,7 +152,10 @@ class UpsertHabitModal extends HTMLElement {
     }
 
     _hasAnyPrefillAttribute () {
-        return this.hasAttribute('prefill-name') || this.hasAttribute('prefill-description')
+        return (
+            this.hasAttribute('prefill-name') || this.hasAttribute('prefill-description') ||
+            this.hasAttribute('prefill-note')
+        )
     }
 
     _prefillFields () {
@@ -156,6 +166,10 @@ class UpsertHabitModal extends HTMLElement {
         if (this.hasAttribute('prefill-description')) {
             this.shadowRoot.querySelector('#description-input').value =
                 this.getAttribute('prefill-description')
+        }
+
+        if (this.hasAttribute('prefill-note')) {
+            this.shadowRoot.querySelector('#note-input').value = this.getAttribute('prefill-note')
         }
     }
 
@@ -182,6 +196,10 @@ class UpsertHabitModal extends HTMLElement {
 
     _getDescriptionInputValue () {
         return this.shadowRoot.querySelector('#description-input').value.trim()
+    }
+
+    _getNoteInputValue () {
+        return this.shadowRoot.querySelector('#note-input').value.trim()
     }
 
     _getSelectedValues () {

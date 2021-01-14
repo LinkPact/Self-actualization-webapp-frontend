@@ -150,11 +150,13 @@ function openEditHabitModal (habitToEdit) {
         modal.setAttribute('prefill-description', habitToEdit.description)
     }
 
+    if (habitToEdit.note) {
+        modal.setAttribute('prefill-note', habitToEdit.note)
+    }
+
     modal.values = data.values
     modal.preselectValues = habitToEdit.values
-    modal.addEventListener('saw.modal-submit', e => onEditHabit(
-        habitToEdit, e.detail.input.name, e.detail.input.description, e.detail.input.values
-    ))
+    modal.addEventListener('saw.modal-submit', e => onEditHabit(habitToEdit, e))
     openModal(modal)
 }
 
@@ -212,10 +214,11 @@ function onEditValue (valueToUpdate, newName, newDescription, newNote) {
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
-function onEditHabit (habitToEdit, newName, newDescription, newValues) {
-    habitToEdit.name = newName
-    habitToEdit.description = newDescription
-    habitToEdit.values = newValues
+function onEditHabit (habitToEdit, event) {
+    habitToEdit.name = event.detail.input.name
+    habitToEdit.description = event.detail.input.description
+    habitToEdit.note = event.detail.input.note
+    habitToEdit.values = event.detail.input.values
 
     updateHabitsDisplay(data.values, data.habits)
     putS3JSON(s3, s3BucketName, jsonPath(), data)
@@ -225,6 +228,7 @@ function onAddHabit (event) {
     data.habits.push({
         name: event.detail.input.name,
         description: event.detail.input.description,
+        note: event.detail.input.note,
         values: event.detail.input.values
     })
     updateHabitsDisplay(data.values, data.habits)

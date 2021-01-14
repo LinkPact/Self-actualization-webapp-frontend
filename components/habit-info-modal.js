@@ -20,6 +20,7 @@ class HabitInfoModal extends HTMLElement {
             <paper-dialog id="dialog">
                 <h3 id="title"></h3>
                 <p id="description"></p>
+                <p id="note"></p>
                 <ul id="values"></ul>
 
                 <button id="delete_button">delete</button>
@@ -30,6 +31,7 @@ class HabitInfoModal extends HTMLElement {
         this._habit = {
             name: '',
             description: '',
+            note: '',
             values: []
         }
         this._dialog = this.shadowRoot.querySelector('#dialog')
@@ -50,6 +52,10 @@ class HabitInfoModal extends HTMLElement {
 
         if (this._habit.description) {
             this.shadowRoot.querySelector('#description').innerHTML = this._habit.description
+        }
+
+        if (this._habit.note) {
+            this.shadowRoot.querySelector('#note').innerHTML = this._habit.note
         }
 
         this._habit.values.forEach(v =>
