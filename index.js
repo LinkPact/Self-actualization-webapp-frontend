@@ -3,7 +3,8 @@ import { logIn, logOut, UserObject } from './modules/login.js'
 import './components/upsert-value-modal.js'
 import './components/upsert-habit-modal.js'
 import './components/value-card.js'
-import { downloadObjectAsJson }  from './modules/file_utils.js'
+import './components/habit-info-modal.js'
+import { downloadObjectAsJson } from './modules/file_utils.js'
 
 const s3BucketName = 'selfactualizationtest'
 
@@ -87,14 +88,12 @@ function createValueCard (value, habits) {
     card.addEventListener('saw.valuecard-delete-value-click', e => {
         onDeleteValueClicked(value)
     })
-    card.addEventListener('saw.valuecard-delete-habit-click', e => {
-        onDeleteHabitClicked(value, e.detail.habit)
-    })
     card.addEventListener('saw.valuecard-edit-value-click', e => {
         onEditValueClicked(value, e)
     })
-    card.addEventListener('saw.valuecard-edit-habit-click', e => {
-        onEditHabitClicked(e.detail.habit)
+    card.addEventListener('saw.valuecard-habit-click', e => {
+        console.log('habit clicked')
+        onHabitClicked(value, e)
     })
     card.addEventListener('valuecard-move-up-click', e => {
         console.log('move up value clicked')
@@ -155,6 +154,19 @@ function openAddHabitModal () {
     openModal(modal)
 }
 
+function openHabitInfoModal (value, habit) {
+    const modal = document.createElement('saw-habit-info-modal')
+    modal.habit = habit
+    modal.addEventListener('saw.habitinfomodal-edit-click', e => {
+        onEditHabitClicked(habit)
+    })
+    modal.addEventListener('saw.habitinfomodal-delete-click', e => {
+        onDeleteHabitClicked(value, habit)
+        modal.close()
+    })
+    openModal(modal)
+}
+
 function onAddValue (event) {
     data.values.push({
         name: event.detail.input.name,
@@ -209,10 +221,6 @@ function onEditValueClicked (value) {
     openEditValueModal(value)
 }
 
-function onEditHabitClicked (habit) {
-    openEditHabitModal(habit)
-}
-
 function onMoveValueClicked(value, direction) {
 
     const valueName = value.name
@@ -248,6 +256,10 @@ function onDeleteValueClicked (value) {
     updateHabitsDisplay(data.values, data.habits)
 }
 
+function onHabitClicked (value, event) {
+    openHabitInfoModal(value, event.detail.habit)
+}
+
 function onDeleteHabitClicked (value, habit) {
     // Unlink the habit from the value
     removeIfPresent(habit.values, value.name)
@@ -259,6 +271,10 @@ function onDeleteHabitClicked (value, habit) {
 
     putS3JSON(s3, s3BucketName, jsonPath(), data)
     updateHabitsDisplay(data.values, data.habits)
+}
+
+function onEditHabitClicked (habit) {
+    openEditHabitModal(habit)
 }
 
 function removeIfPresent (arr, element) {
