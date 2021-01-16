@@ -34,7 +34,7 @@ class ValueInfoModal extends HTMLElement {
             description: '',
             note: ''
         }
-        this._habit = {
+        this._habits = {
             name: '',
             description: '',
             note: '',
@@ -95,7 +95,7 @@ class ValueInfoModal extends HTMLElement {
 
     _createHabitListItem (habit) {
         const li = document.createElement('li')
-        li.innerHTML = habit
+        li.innerHTML = habit.name
         return li
     }
 }

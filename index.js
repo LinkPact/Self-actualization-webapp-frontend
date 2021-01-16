@@ -4,6 +4,7 @@ import './components/upsert-value-modal.js'
 import './components/upsert-habit-modal.js'
 import './components/value-card.js'
 import './components/habit-info-modal.js'
+import './components/value-info-modal.js'
 import { downloadObjectAsJson } from './modules/file_utils.js'
 
 const s3BucketName = 'selfactualizationtest'
@@ -85,6 +86,9 @@ function createValueCard (value, habits) {
 
     card.value = value
     card.habits = habits
+    card.addEventListener('saw.valuecard-info-click', e => {
+        onValueInfoButtonClicked(value, habits)
+    })
     card.addEventListener('saw.valuecard-delete-value-click', e => {
         onDeleteValueClicked(value)
     })
@@ -167,6 +171,13 @@ function openAddHabitModal () {
     openModal(modal)
 }
 
+function openValueInfoModal (value, habits) {
+    const modal = document.createElement('saw-value-info-modal')
+    modal.value = value
+    modal.habits = habits
+    openModal(modal)
+}
+
 function openHabitInfoModal (value, habit) {
     const modal = document.createElement('saw-habit-info-modal')
     modal.habit = habit
@@ -235,26 +246,27 @@ function onAddHabit (event) {
     putS3JSON(s3, s3BucketName, jsonPath(), data)
 }
 
+function onValueInfoButtonClicked (value, habits) {
+    openValueInfoModal(value, habits)
+}
+
 function onEditValueClicked (value) {
     openEditValueModal(value)
 }
 
-function onMoveValueClicked(value, direction) {
-
+function onMoveValueClicked (value, direction) {
     const valueName = value.name
     const valueIndex = data.values.map(value => value.name).indexOf(value.name)
-    let targetIndex = -1;
+    let targetIndex = -1
     if (direction === 'up') {
         if (valueIndex > 0) {
             targetIndex = valueIndex - 1
         }
-    }
-    else if (direction === 'down') {
+    } else if (direction === 'down') {
         if (valueIndex < data.values.length - 1) {
             targetIndex = valueIndex + 1
         }
-    }
-    else {
+    } else {
         throw new Error(`Unknown direction encountered: ${direction}, expected "up" or "down"`)
     }
 
@@ -264,7 +276,6 @@ function onMoveValueClicked(value, direction) {
         putS3JSON(s3, s3BucketName, jsonPath(), data)
         updateHabitsDisplay(data.values, data.habits)
     }
-
 }
 
 function onDeleteValueClicked (value) {

@@ -14,6 +14,7 @@ import 'https://unpkg.com/@polymer/paper-card/paper-card.js?module'
  * Events:
  * - saw.valuecard-delete-value-click   dispatched when the user clicks on the delete value button
  * - saw.valuecard-habit-click          dispatched when the user clicks on a habit
+ * - saw.valuecard-info-click           dispatched when the user clicks on the info button
  */
 class ValueCard extends HTMLElement {
     constructor () {
@@ -37,6 +38,7 @@ class ValueCard extends HTMLElement {
                     <p id='description'></p>
                     <p id='note'></p>
 
+                    <button id='info-button'>Info</button>
                     <button id='delete-value-button'>Delete value</button>
                     <button id='edit-value-button'>Edit value</button>
                     
@@ -68,6 +70,14 @@ class ValueCard extends HTMLElement {
         if (this._value.note) {
             this.shadowRoot.querySelector('#note').innerHTML = this._value.note
         }
+
+        this.shadowRoot.querySelector('#info-button').addEventListener('click', e => {
+            this.dispatchEvent(new CustomEvent('saw.valuecard-info-click'), {
+                detail: {
+                    value: this._value
+                }
+            })
+        })
 
         this.shadowRoot.querySelector('#delete-value-button').addEventListener('click', e =>
             this.dispatchEvent(new CustomEvent('saw.valuecard-delete-value-click', {
