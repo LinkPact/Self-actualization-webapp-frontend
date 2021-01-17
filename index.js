@@ -89,12 +89,6 @@ function createValueCard (value, habits) {
     card.addEventListener('saw.valuecard-info-click', e => {
         onValueInfoButtonClicked(value, habits)
     })
-    card.addEventListener('saw.valuecard-delete-value-click', e => {
-        onDeleteValueClicked(value)
-    })
-    card.addEventListener('saw.valuecard-edit-value-click', e => {
-        onEditValueClicked(value, e)
-    })
     card.addEventListener('saw.valuecard-habit-click', e => {
         console.log('habit clicked')
         onHabitClicked(value, e)
@@ -175,6 +169,13 @@ function openValueInfoModal (value, habits) {
     const modal = document.createElement('saw-value-info-modal')
     modal.value = value
     modal.habits = habits
+    modal.addEventListener('saw.valueinfomodal-delete-click', e => {
+        onDeleteValueClicked(value)
+        modal.close()
+    })
+    modal.addEventListener('saw.valueinfomodal-edit-click', e => {
+        onEditValueClicked(value, e)
+    })
     openModal(modal)
 }
 

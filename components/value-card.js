@@ -12,8 +12,6 @@ import 'https://unpkg.com/@polymer/paper-card/paper-card.js?module'
  * Currently not possible to add value information using attributes.
  *
  * Events:
- * - saw.valuecard-delete-value-click   dispatched when the user clicks on the delete value button
- * - saw.valuecard-habit-click          dispatched when the user clicks on a habit
  * - saw.valuecard-info-click           dispatched when the user clicks on the info button
  */
 class ValueCard extends HTMLElement {
@@ -39,9 +37,6 @@ class ValueCard extends HTMLElement {
                     <p id='note'></p>
 
                     <button id='info-button'>Info</button>
-                    <button id='delete-value-button'>Delete value</button>
-                    <button id='edit-value-button'>Edit value</button>
-                    
                     <button id='move-up-button'>Move up</button>
                     <button id='move-down-button'>Move down</button>
 
@@ -77,26 +72,6 @@ class ValueCard extends HTMLElement {
                     value: this._value
                 }
             })
-        })
-
-        this.shadowRoot.querySelector('#delete-value-button').addEventListener('click', e =>
-            this.dispatchEvent(new CustomEvent('saw.valuecard-delete-value-click', {
-                detail: {
-                    value: this._value
-                }
-            }))
-        )
-
-        this.shadowRoot.querySelector('#edit-value-button').addEventListener('click', e => {
-            e.preventDefault()
-
-            this.dispatchEvent(new CustomEvent('saw.valuecard-edit-value-click', {
-                detail: {
-                    value: this._value,
-                    habits: this._habits
-                }
-            }
-            ))
         })
 
         this.shadowRoot.querySelector('#move-up-button').addEventListener('click', e => {

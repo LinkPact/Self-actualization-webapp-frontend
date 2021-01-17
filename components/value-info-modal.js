@@ -2,10 +2,10 @@ import 'https://unpkg.com/@polymer/paper-dialog/paper-dialog.js?module'
 
 /*
  * Events:
- * - saw.modal-close                        dispatched when the modal is closed
- * - saw.valueinfomodal-delete-value-click  dispatched when the user clicks on the delete value
- *                                          button
- * - saw.valueinfomodal-edit-value-click    dispatched when the user clicks on the edit value button
+ * - saw.modal-close                    dispatched when the modal is closed
+ * - saw.valueinfomodal-delete-click    dispatched when the user clicks on the delete value
+ *                                      button
+ * - saw.valueinfomodal-edit-click      dispatched when the user clicks on the edit value button
  */
 class ValueInfoModal extends HTMLElement {
     constructor () {
@@ -82,7 +82,8 @@ class ValueInfoModal extends HTMLElement {
         editButton.addEventListener('click', e => {
             this.dispatchEvent(new CustomEvent('saw.valueinfomodal-edit-click', {
                 detail: {
-                    value: this._value
+                    value: this._value,
+                    habits: this._habits
                 }
             }))
         })
