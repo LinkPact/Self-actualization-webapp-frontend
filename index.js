@@ -12,6 +12,9 @@ const s3BucketName = 'selfactualizationtest'
 /*
  * TODO: Add store module that allows registering callbacks when its data changes, so we do not have
  *       to call putS3JSON and updateHabitDisplay every time we modify the data.
+ *
+ * Another use case: registering callbacks on the value and habits passed to
+ * the info modals so they are updated after edits.
  */
 let data = {
     values: [],
