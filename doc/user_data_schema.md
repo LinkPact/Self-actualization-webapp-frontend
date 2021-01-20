@@ -1,5 +1,6 @@
 # Schema for user data
-__Work in progress:__ More fields will be added as needed.
+
+**Work in progress:** More fields will be added as needed.
 
 - Should be unique per user
 
@@ -10,7 +11,7 @@ __Work in progress:__ More fields will be added as needed.
         {
             "name": string,
             "description": string,
-            "note": string
+            "notes": array of string
         }
         ...
     ],
@@ -18,7 +19,8 @@ __Work in progress:__ More fields will be added as needed.
         ...
         {
             "name": string,
-            "values": array of values identified by name 
+            "values": array of values identified by name
+            "notes": array of string
         }
         ...
     ]
