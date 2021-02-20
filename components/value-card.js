@@ -21,6 +21,8 @@ class ValueCard extends HTMLElement {
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.innerHTML = `
             <style>
+                @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+
                 paper-card {
                     width: 100%;
                     height: 100%;
@@ -30,17 +32,27 @@ class ValueCard extends HTMLElement {
                     cursor: pointer;
                     background-color: lightgray;
                 }
+
+                .action-button {
+                    background-color: white;
+                    border: 2px solid #ccc;
+                    border-radius: 5px;
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 5px;
+                    margin-top: 5px;
+                }
             </style>
 
             <paper-card id='card' heading='test'>
                 <div class='card-content'>
                     <p id='description'></p>
 
-                    <button id='delete-value-button'>Delete value</button>
-                    <button id='edit-value-button'>Edit value</button>
+                    <button id='delete-value-button' class="action-button"><i class="fa fa-times-circle"></i></button>
+                    <button id='edit-value-button' class="action-button"><i class="fa fa-pencil"></i></button>
                     
-                    <button id='move-up-button'>Move up</button>
-                    <button id='move-down-button'>Move down</button>
+                    <button id='move-up-button' class="action-button"><i class="fa fa-arrow-up"></i></button>
+                    <button id='move-down-button' class="action-button"><i class="fa fa-arrow-down"></i></button>
 
                     <ul id='habit-list'></ul>
                 </div>
