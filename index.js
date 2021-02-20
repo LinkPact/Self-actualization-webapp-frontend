@@ -5,8 +5,13 @@ import './components/upsert-habit-modal.js'
 import './components/value-card.js'
 import './components/habit-info-modal.js'
 import { downloadObjectAsJson } from './modules/file_utils.js'
+import { AwsInteraction } from './modules/aws_config.js'
 
 const s3BucketName = 'selfactualizationtest'
+
+const awsConnection = new AwsInteraction()
+const s3 = awsConnection.setupS3()
+const poolData = awsConnection.getPoolData()
 
 /*
  * TODO: Add store module that allows registering callbacks when its data changes, so we do not have
@@ -17,23 +22,6 @@ let data = {
     habits: []
 }
 
-// Setup identity pool
-AWS.config.region = 'eu-north-1' // Region
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'eu-north-1:51a3d198-8df4-48b0-bc86-61e12f4539d9'
-})
-
-//= ============== AWS IDs ===============
-const userPoolId = 'eu-north-1_Txo4RdkuE'
-const clientId = '4khr09la8i2o4ftq60via0f1dk'
-//= ============== AWS IDs ===============
-
-const poolData = {
-    UserPoolId: userPoolId,
-    ClientId: clientId
-}
-
-const s3 = new AWS.S3()
 
 function jsonPath () {
     if (cognitoUserObj.user) {
